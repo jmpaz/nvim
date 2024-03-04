@@ -1,7 +1,5 @@
 -- [[ Setting options ]]
 -- See `:help vim.opt`
--- NOTE: You can change these options as you wish!
---  For more options, you can see `:help option-list`
 
 -- Make line numbers default
 vim.opt.number = true
@@ -15,10 +13,8 @@ vim.opt.mouse = 'a'
 -- Don't show the mode, since it's already in status line
 vim.opt.showmode = false
 
--- Sync clipboard between OS and Neovim.
---  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.opt.clipboard = 'unnamedplus'
+vim.opt.clipboard = { exclude = '.*' }
 
 -- Enable break indent
 vim.opt.breakindent = true
@@ -55,5 +51,18 @@ vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
+
+-- Markdown
+-- disable conceal level
+vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
+  pattern = { '*.md', '*.qmd' },
+  callback = function()
+    vim.wo.conceallevel = 0
+  end,
+})
+
+-- Python
+-- use venv
+vim.g.python3_host_prog = vim.fn.expand '~/.local/lib/virtualenvs/neovim/bin/python3'
 
 -- vim: ts=2 sts=2 sw=2 et
