@@ -5,6 +5,7 @@ return {
     config = function()
       local files = require 'mini.files'
       vim.keymap.set('n', '-', '<cmd>lua require("mini.files").open()<CR>', { desc = 'Files' })
+      vim.keymap.set('n', '<leader>F', '<cmd>lua require("mini.files").open()<CR>', { desc = 'Files' })
       files.setup {
         mappings = {
           go_in_plus = 'l',
@@ -24,7 +25,15 @@ return {
       bracketed.setup {}
 
       local jump2d = require 'mini.jump2d'
-      jump2d.setup {}
+      jump2d.setup {
+        view = {
+          dim = true,
+        },
+        allowed_windows = {
+          current = true,
+          not_current = true,
+        },
+      }
 
       local animate = require 'mini.animate'
       -- don't use animate when scrolling with the mouse (via folke/LazyVim)
@@ -54,6 +63,27 @@ return {
         open = { enable = false },
         close = { enable = false },
       }
+
+      local basics = require 'mini.basics'
+      basics.setup {
+        mappings = {
+          basic = true,
+        },
+        autocommands = {
+          relnum_in_visual_mode = true,
+        },
+      }
+
+      local statusline = require 'mini.statusline'
+      statusline.setup()
+
+      local ai = require 'mini.ai'
+      ai.setup {
+        n_lines = 500,
+      }
+
+      local surround = require 'mini.surround'
+      surround.setup {}
 
       local hipatterns = require 'mini.hipatterns'
       hipatterns.setup {
