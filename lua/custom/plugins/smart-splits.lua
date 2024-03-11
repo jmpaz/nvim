@@ -3,13 +3,15 @@ return {
     'mrjones2014/smart-splits.nvim',
     event = 'VeryLazy',
     -- build = './kitty/install-kittens.bash',
+    resize_mode = {
+      quit_key = '<ESC>',
+      resize_keys = { 'h', 'j', 'k', 'l' },
+      silent = true,
+    },
     config = function()
       local smart_splits = require 'smart-splits'
       -- resizing windows
-      vim.keymap.set('n', '<C-Left>', smart_splits.resize_left)
-      vim.keymap.set('n', '<C-Down>', smart_splits.resize_down)
-      vim.keymap.set('n', '<C-Up>', smart_splits.resize_up)
-      vim.keymap.set('n', '<C-Right>', smart_splits.resize_right)
+      vim.keymap.set('n', '<C-w>r', smart_splits.start_resize_mode)
       -- moving between splits
       vim.keymap.set('n', '<C-h>', smart_splits.move_cursor_left)
       vim.keymap.set('n', '<C-j>', smart_splits.move_cursor_down)

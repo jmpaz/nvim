@@ -1,8 +1,5 @@
 vim.g.maplocalleader = ','
 
--- [[ Basic Keymaps ]]
---  See `:help vim.keymap.set()`
-
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
@@ -36,9 +33,14 @@ vim.keymap.set('n', '<C-w>s', '<nop>', { desc = 'Disable default horizontal spli
 vim.keymap.set('n', '<C-w>|', '<cmd>vsplit<CR>', { desc = 'Create a vertical split' })
 vim.keymap.set('n', '<C-w>-', '<cmd>split<CR>', { desc = 'Create a horizontal split' })
 
--- [[ Basic Autocommands ]]
---  See `:help lua-guide-autocommands`
+-- Tabs
+vim.keymap.set('n', '<C-w>t', '<cmd>tab split<CR>', { desc = 'Open in new tab' }) -- pairs with <C-w>T
+vim.keymap.set('n', '<C-Left>', '<cmd>tabprevious<CR>', { desc = 'Go to previous tab' })
+vim.keymap.set('n', '<C-Right>', '<cmd>tabnext<CR>', { desc = 'Go to next tab' })
+vim.keymap.set('n', '<C-t>n', '<cmd>tabnew<CR>', { desc = 'Go to next tab' })
+vim.keymap.set('n', '<C-t>x', '<cmd>tabclose<CR>', { desc = 'Close tab' })
 
+-- [[ Autocommands ]]
 -- Highlight when yanking (copying) text
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
