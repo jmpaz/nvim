@@ -3,36 +3,9 @@ return {
     'echasnovski/mini.nvim',
     version = false,
     config = function()
-      local files = require 'mini.files'
-      vim.keymap.set('n', '-', '<cmd>lua require("mini.files").open()<CR>', { desc = 'Files' })
-      vim.keymap.set('n', '<leader>F', '<cmd>lua require("mini.files").open()<CR>', { desc = 'Files' })
-      files.setup {
-        mappings = {
-          go_in_plus = 'l',
-          go_in = 'L',
-          synchronize = '<CR>',
-          show_help = '?',
-        },
-        windows = {
-          preview = true,
-          width_focus = 50,
-          width_nofocus = 15,
-          width_preview = 70,
-        },
-      }
-
-      local bracketed = require 'mini.bracketed'
-      bracketed.setup {}
-
-      local jump2d = require 'mini.jump2d'
-      jump2d.setup {
-        view = {
-          dim = true,
-        },
-        allowed_windows = {
-          current = true,
-          not_current = true,
-        },
+      local ai = require 'mini.ai'
+      ai.setup {
+        n_lines = 500,
       }
 
       local animate = require 'mini.animate'
@@ -74,16 +47,26 @@ return {
         },
       }
 
-      local statusline = require 'mini.statusline'
-      statusline.setup()
+      local bracketed = require 'mini.bracketed'
+      bracketed.setup {}
 
-      local ai = require 'mini.ai'
-      ai.setup {
-        n_lines = 500,
+      local files = require 'mini.files'
+      vim.keymap.set('n', '-', '<cmd>lua require("mini.files").open()<CR>', { desc = 'Files' })
+      vim.keymap.set('n', '<leader>F', '<cmd>lua require("mini.files").open()<CR>', { desc = 'Files' })
+      files.setup {
+        mappings = {
+          go_in_plus = 'l',
+          go_in = 'L',
+          synchronize = '<CR>',
+          show_help = '?',
+        },
+        windows = {
+          preview = true,
+          width_focus = 50,
+          width_nofocus = 15,
+          width_preview = 70,
+        },
       }
-
-      local surround = require 'mini.surround'
-      surround.setup {}
 
       local hipatterns = require 'mini.hipatterns'
       hipatterns.setup {
@@ -98,6 +81,23 @@ return {
           hex_color = hipatterns.gen_highlighter.hex_color(),
         },
       }
+
+      local jump2d = require 'mini.jump2d'
+      jump2d.setup {
+        view = {
+          dim = true,
+        },
+        allowed_windows = {
+          current = true,
+          not_current = true,
+        },
+      }
+
+      local statusline = require 'mini.statusline'
+      statusline.setup()
+
+      local surround = require 'mini.surround'
+      surround.setup {}
     end,
   },
 }
