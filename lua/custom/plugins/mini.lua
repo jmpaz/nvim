@@ -93,6 +93,11 @@ return {
         },
       }
 
+      local starter = require 'mini.starter'
+      starter.setup {
+        footer = '',
+      }
+
       local statusline = require 'mini.statusline'
       statusline.setup()
 
