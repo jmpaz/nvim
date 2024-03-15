@@ -37,7 +37,7 @@ vim.keymap.set('n', '<C-w>-', '<cmd>split<CR>', { desc = 'Create a horizontal sp
 vim.keymap.set('n', '<C-w>t', '<cmd>tab split<CR>', { desc = 'Open in new tab' }) -- pairs with <C-w>T
 vim.keymap.set('n', '<C-Left>', '<cmd>tabprevious<CR>', { desc = 'Go to previous tab' })
 vim.keymap.set('n', '<C-Right>', '<cmd>tabnext<CR>', { desc = 'Go to next tab' })
-vim.keymap.set('n', '<C-t>n', '<cmd>tabnew<CR>', { desc = 'Go to next tab' })
+vim.keymap.set('n', '<C-t>n', '<cmd>tabnew<CR>', { desc = 'Create new tab' })
 vim.keymap.set('n', '<C-t>x', '<cmd>tabclose<CR>', { desc = 'Close tab' })
 
 -- [[ Autocommands ]]
