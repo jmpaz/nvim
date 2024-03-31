@@ -93,6 +93,11 @@ return {
         },
       }
 
+      local map = require 'mini.map'
+      vim.keymap.set('n', '\\m', '<cmd>lua require("mini.map").toggle()<CR>', { desc = 'Files' })
+      vim.keymap.set('n', '\\M', '<cmd>lua require("mini.map").toggle_side()<CR>', { desc = 'Files' })
+      map.setup {}
+
       local starter = require 'mini.starter'
       starter.setup {
         footer = '',
