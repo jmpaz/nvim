@@ -65,4 +65,24 @@ vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
 -- use venv
 vim.g.python3_host_prog = vim.fn.expand '~/.local/lib/virtualenvs/neovim/bin/python3'
 
+vim.api.nvim_create_autocmd('VimEnter', {
+  callback = function()
+    if vim.g.no_startscreen then
+      -- require('mini.starter').config.autoopen = false
+      local starter = require 'mini.starter'
+      starter.setup {
+        evaluate_single = true,
+        items = {
+          starter.sections.builtin_actions(),
+        },
+        content_hooks = {
+          starter.gen_hook.adding_bullet(),
+          starter.gen_hook.aligning('center', 'center'),
+        },
+      }
+    end
+  end,
+})
+
+--
 -- vim: ts=2 sts=2 sw=2 et
