@@ -1,6 +1,8 @@
 return {
   {
     'sourcegraph/sg.nvim',
+    -- branch = 'update-cody-agent-03-12',
+    -- build = 'nvim -l build/init.lua',
     dependencies = { 'nvim-lua/plenary.nvim', 'nvim-telescope/telescope.nvim' },
     config = function()
       require('sg').setup()
