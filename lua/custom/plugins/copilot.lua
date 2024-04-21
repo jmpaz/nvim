@@ -20,7 +20,10 @@ return {
         },
       },
       filetypes = {
+        ['*'] = true,
         markdown = true,
+        yaml = true,
+        json = true,
         help = true,
       },
     },
