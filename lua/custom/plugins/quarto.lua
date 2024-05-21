@@ -19,6 +19,7 @@ return {
         never_run = { 'yaml' },
       },
     },
+    dependencies = { 'jmbuhr/otter.nvim' },
     init = function()
       local runner = require 'quarto.runner'
 
@@ -45,10 +46,19 @@ return {
     end,
   },
   {
-    'jmbuhr/otter.nvim',
+    'GCBallesteros/jupytext.nvim',
     opts = {
-      buffers = {
-        set_filetype = true,
+      custom_language_formatting = {
+        python = {
+          extension = 'qmd',
+          style = 'quarto',
+          force_ft = 'quarto',
+        },
+        r = {
+          extension = 'qmd',
+          style = 'quarto',
+          force_ft = 'quarto',
+        },
       },
     },
   },

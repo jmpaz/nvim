@@ -94,8 +94,12 @@ return {
       }
 
       local map = require 'mini.map'
-      vim.keymap.set('n', '\\m', '<cmd>lua require("mini.map").toggle()<CR>', { desc = 'Files' })
-      vim.keymap.set('n', '\\M', '<cmd>lua require("mini.map").toggle_side()<CR>', { desc = 'Files' })
+      vim.keymap.set('n', '<Leader>mt', '<cmd>lua require("mini.map").toggle()<CR>', { desc = 'Toggle Map' })
+      vim.keymap.set('n', '<Leader>ms', '<cmd>lua require("mini.map").toggle_side()<CR>', { desc = 'Toggle Side' })
+      vim.keymap.set('n', '<Leader>mf', '<cmd>lua require("mini.map").toggle_focus()<CR>', { desc = 'Toggle Focus' })
+      vim.keymap.set('n', '<Leader>mr', '<cmd>lua require("mini.map").refresh()<CR>', { desc = 'Refresh' })
+      vim.keymap.set('n', '<Leader>mo', '<cmd>lua require("mini.map").open()<CR>', { desc = 'Open' })
+      vim.keymap.set('n', '<Leader>mc', '<cmd>lua require("mini.map").close()<CR>', { desc = 'Close' })
       map.setup {}
 
       local starter = require 'mini.starter'
