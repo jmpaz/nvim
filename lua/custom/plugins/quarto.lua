@@ -34,15 +34,13 @@ return {
 
       -- which-key
       local wk = require 'which-key'
-      wk.register({
-        r = {
-          name = 'Run (Quarto)',
-          c = 'Run Cell',
-          a = 'Run Cell + Above',
-          A = 'Run All Cells',
-          l = 'Run Line',
-        },
-      }, { prefix = '<localleader>' })
+      wk.add {
+        { '<localleader>r', 'Run (Quarto)', name = 'Run (Quarto)' },
+        { '<localleader>rA', 'Run All Cells', name = 'Run All Cells' },
+        { '<localleader>ra', 'Run Cell + Above', name = 'Run Cell + Above' },
+        { '<localleader>rc', 'Run Cell', name = 'Run Cell' },
+        { '<localleader>rl', 'Run Line', name = 'Run Line' },
+      }
     end,
   },
   {

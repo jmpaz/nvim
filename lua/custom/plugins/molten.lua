@@ -43,47 +43,35 @@ return {
       vim.keymap.set('v', '<localleader>m', ':<C-u>MoltenEvaluateVisual<CR>', { silent = true, desc = 'Evaluate selection (Molten)' })
 
       -- which-key menu definition
-      wk.register({
-        m = {
-          name = 'Molten',
-          k = {
-            name = 'Kernel',
-            i = 'Initialize Kernel',
-            d = 'De-initialize Kernel',
-            r = 'Restart Kernel',
-            s = 'Interrupt Kernel',
-          },
-          c = {
-            name = 'Cells',
-            g = 'Go to Cell',
-            n = 'Next Cell',
-            p = 'Previous Cell',
-            d = 'Delete Cell',
-            r = 'Re-evaluate Cell',
-          },
-          r = {
-            name = 'Evaluate',
-            l = 'Evaluate Line',
-            o = 'Evaluate Operator',
-            a = 'Evaluate Argument',
-          },
-          o = {
-            name = 'Output',
-            s = 'Show Output Window',
-            h = 'Hide Output Window',
-            e = 'Enter Output Window',
-            o = 'Open Output in Browser',
-          },
-          f = {
-            name = 'File',
-            s = 'Save Cells',
-            l = 'Load Cells',
-            e = 'Export to .ipynb',
-            i = 'Import from .ipynb',
-          },
-          i = 'Info',
-        },
-      }, { prefix = '<localleader>' })
+      wk.add {
+        { '<localleader>m', 'Molten', name = 'Molten' },
+        { '<localleader>mk', 'Kernel', name = 'Kernel' },
+        { '<localleader>mki', 'Initialize Kernel', name = 'Initialize Kernel' },
+        { '<localleader>mkd', 'De-initialize Kernel', name = 'De-initialize Kernel' },
+        { '<localleader>mkr', 'Restart Kernel', name = 'Restart Kernel' },
+        { '<localleader>mks', 'Interrupt Kernel', name = 'Interrupt Kernel' },
+        { '<localleader>mc', 'Cells', name = 'Cells' },
+        { '<localleader>mcg', 'Go to Cell', name = 'Go to Cell' },
+        { '<localleader>mcn', 'Next Cell', name = 'Next Cell' },
+        { '<localleader>mcp', 'Previous Cell', name = 'Previous Cell' },
+        { '<localleader>mcd', 'Delete Cell', name = 'Delete Cell' },
+        { '<localleader>mcr', 'Re-evaluate Cell', name = 'Re-evaluate Cell' },
+        { '<localleader>mr', 'Evaluate', name = 'Evaluate' },
+        { '<localleader>mrl', 'Evaluate Line', name = 'Evaluate Line' },
+        { '<localleader>mro', 'Evaluate Operator', name = 'Evaluate Operator' },
+        { '<localleader>mra', 'Evaluate Argument', name = 'Evaluate Argument' },
+        { '<localleader>mo', 'Output', name = 'Output' },
+        { '<localleader>mos', 'Show Output Window', name = 'Show Output Window' },
+        { '<localleader>moh', 'Hide Output Window', name = 'Hide Output Window' },
+        { '<localleader>moe', 'Enter Output Window', name = 'Enter Output Window' },
+        { '<localleader>moo', 'Open Output in Browser', name = 'Open Output in Browser' },
+        { '<localleader>mf', 'File', name = 'File' },
+        { '<localleader>mfs', 'Save Cells', name = 'Save Cells' },
+        { '<localleader>mfl', 'Load Cells', name = 'Load Cells' },
+        { '<localleader>mfe', 'Export to .ipynb', name = 'Export to .ipynb' },
+        { '<localleader>mfi', 'Import from .ipynb', name = 'Import from .ipynb' },
+        { '<localleader>mi', 'Info', name = 'Info' },
+      }
     end,
   },
 }
