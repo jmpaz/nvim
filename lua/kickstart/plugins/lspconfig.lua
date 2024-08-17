@@ -120,7 +120,50 @@ return {
       --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
       --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
       local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+      capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities()))
+
+      capabilities.workspace = {
+        didChangeWatchedFiles = {
+          dynamicRegistration = true,
+        },
+      }
+
+      require('lspconfig').markdown_oxide.setup {
+        capabilities = capabilities,
+
+        on_attach = function(client, _)
+          if client.name == 'markdown_oxide' then
+            -- Setup daily note commands
+            vim.api.nvim_create_user_command('Daily', function(args)
+              local input = args.args
+              vim.lsp.buf.execute_command { command = 'jump', arguments = { input } }
+            end, { desc = 'Open daily note', nargs = '*' })
+
+            -- Setup for codelens refresh
+            local function check_codelens_support()
+              local clients = vim.lsp.get_active_clients { bufnr = _ }
+              for _, c in ipairs(clients) do
+                if c.server_capabilities.codeLensProvider then
+                  return true
+                end
+              end
+              return false
+            end
+
+            vim.api.nvim_create_autocmd({ 'TextChanged', 'InsertLeave', 'CursorHold', 'LspAttach', 'BufEnter' }, {
+              buffer = _,
+              callback = function()
+                if check_codelens_support() then
+                  vim.lsp.codelens.refresh { bufnr = _ }
+                end
+              end,
+            })
+
+            -- Trigger codelens refresh on LspAttach event
+            vim.api.nvim_exec_autocmds('User', { pattern = 'LspAttached' })
+          end
+        end,
+      }
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
