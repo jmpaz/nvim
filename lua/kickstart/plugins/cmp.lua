@@ -84,8 +84,6 @@ return {
           end, { 'i', 's' }),
         },
         sources = {
-          -- { name = 'cody' },
-          { name = 'copilot' },
           {
             name = 'nvim_lsp',
             option = {
