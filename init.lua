@@ -76,42 +76,6 @@ now(function()
 end)
 
 --
--- terminal integration
-later(function()
-  if vim.loop.os_uname().sysname == 'Darwin' then
-    -- macOS: zellij-nav.nvim
-    add({
-      source = 'https://git.sr.ht/~swaits/zellij-nav.nvim',
-      lazy = true,
-      event = 'VeryLazy',
-    })
-
-    vim.keymap.set('n', '<m-h>', '<cmd>ZellijNavigateLeft<cr>', { silent = true, desc = 'Navigate Left' })
-    vim.keymap.set('n', '<m-j>', '<cmd>ZellijNavigateDown<cr>', { silent = true, desc = 'Navigate Down' })
-    vim.keymap.set('n', '<m-k>', '<cmd>ZellijNavigateUp<cr>', { silent = true, desc = 'Navigate Up' })
-    vim.keymap.set('n', '<m-l>', '<cmd>ZellijNavigateRight<cr>', { silent = true, desc = 'Navigate Right' })
-  else
-    -- Linux: vim-tmux-navigator
-    add({
-      source = 'christoomey/vim-tmux-navigator',
-      cmd = {
-        'TmuxNavigateLeft',
-        'TmuxNavigateDown',
-        'TmuxNavigateUp',
-        'TmuxNavigateRight',
-        'TmuxNavigatePrevious',
-      },
-    })
-
-    vim.keymap.set('n', '<m-h>', '<cmd>TmuxNavigateLeft<cr>')
-    vim.keymap.set('n', '<m-j>', '<cmd>TmuxNavigateDown<cr>')
-    vim.keymap.set('n', '<m-k>', '<cmd>TmuxNavigateUp<cr>')
-    vim.keymap.set('n', '<m-l>', '<cmd>TmuxNavigateRight<cr>')
-    vim.keymap.set('n', '<m-\\>', '<cmd>TmuxNavigatePrevious<cr>')
-  end
-end)
-
---
 -- splits
 later(function()
   vim.keymap.set('n', '<C-w>-', '<C-w>s', { noremap = true, silent = true })
