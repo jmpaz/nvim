@@ -195,15 +195,11 @@ later(function()
   })
 end)
 
+--
+-- code completion
 later(function()
-    add({
-      source = 'nvim-treesitter/nvim-treesitter',
-      checkout = 'master',
-      monitor = 'main',
-      hooks = { post_checkout = function() vim.cmd('TSUpdate') end },
-    })
-    require('nvim-treesitter.configs').setup({
-      ensure_installed = { 'lua', 'vimdoc' },
-      highlight = { enable = true },
-    })
+  add({
+    source = 'supermaven-inc/supermaven-nvim',
+  })
+  require('supermaven-nvim').setup({})
 end)
