@@ -7,7 +7,6 @@ if not vim.loop.fs_stat(mini_path) then
     'git',
     'clone',
     '--filter=blob:none',
-    -- Uncomment next line to use 'stable' branch
     '--branch',
     'stable',
     'https://github.com/echasnovski/mini.nvim',
@@ -34,9 +33,125 @@ later(function()
   require('mini.comment').setup()
   require('mini.cursorword').setup()
   require('mini.files').setup()
+  require('mini.git').setup()
+  require('mini.diff').setup()
   require('mini.pick').setup()
   require('mini.jump2d').setup()
   require('mini.surround').setup()
+  require('mini.trailspace').setup()
+end)
+
+-- key hints
+later(function()
+  local miniclue = require('mini.clue')
+  miniclue.setup({
+    window = {
+      delay = 200,
+    },
+
+    triggers = {
+      -- Leader triggers
+      { mode = 'n', keys = '<Leader>' },
+      { mode = 'x', keys = '<Leader>' },
+
+      -- Built-in completion
+      { mode = 'i', keys = '<C-x>' },
+
+      -- `g` key
+      { mode = 'n', keys = 'g' },
+      { mode = 'x', keys = 'g' },
+
+      -- Marks
+      { mode = 'n', keys = "'" },
+      { mode = 'n', keys = '`' },
+      { mode = 'x', keys = "'" },
+      { mode = 'x', keys = '`' },
+
+      -- Registers
+      { mode = 'n', keys = '"' },
+      { mode = 'x', keys = '"' },
+      { mode = 'i', keys = '<C-r>' },
+      { mode = 'c', keys = '<C-r>' },
+
+      -- Window commands
+      { mode = 'n', keys = '<C-w>' },
+
+      -- `z` key
+      { mode = 'n', keys = 'z' },
+      { mode = 'x', keys = 'z' },
+    },
+
+    clues = {
+      -- Enhance this by adding descriptions for <Leader> mapping groups
+      miniclue.gen_clues.builtin_completion(),
+      miniclue.gen_clues.g(),
+      miniclue.gen_clues.marks(),
+      miniclue.gen_clues.registers(),
+      miniclue.gen_clues.windows(),
+      miniclue.gen_clues.z(),
+    },
+  })
+end)
+
+-- file picker
+later(function()
+  local window_config = function()
+    local height = math.max(math.floor(0.7 * 0.618 * vim.o.lines), 10)
+    local width = math.max(math.floor(0.9 * 0.4 * vim.o.columns), 40)
+    return {
+      anchor = 'NW',
+      height = height,
+      width = width,
+      border = 'double',
+      -- Adjust the row to position the window higher up on the screen
+      row = math.floor(0.2 * (vim.o.lines - height)),
+      col = math.floor(0.5 * (vim.o.columns - width)),
+    }
+  end
+
+  require('mini.pick').setup({
+    mappings = {
+      choose_in_vsplit = '<C-CR>',
+    },
+    options = {
+      use_cache = true,
+    },
+    window = {
+      config = window_config,
+    },
+  })
+  vim.ui.select = MiniPick.ui_select
+
+  vim.keymap.set(
+    'n',
+    '<Space><Space>',
+    function() vim.cmd('Pick files') end,
+    { noremap = true, silent = true, desc = 'Search project files' }
+  )
+  vim.keymap.set(
+    'n',
+    '<Space><S-Space>',
+    function() vim.cmd('Pick buffers') end,
+    { noremap = true, silent = true, desc = 'Search open buffers' }
+  )
+  vim.keymap.set(
+    'n',
+    '<Space>sg',
+    function() vim.cmd('Pick grep_live') end,
+    { noremap = true, silent = true, desc = 'Search text' }
+  )
+  vim.keymap.set(
+    'n',
+    '<Space>sr',
+    function() vim.cmd('Pick resume') end,
+    { noremap = true, silent = true, desc = 'Resume search' }
+  )
+  vim.keymap.set(
+    'n',
+    '<Space>sh',
+    function() vim.cmd('Pick help') end,
+    { noremap = true, silent = true, desc = 'Search help' }
+  )
 end)
 
 --
