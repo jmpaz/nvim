@@ -41,58 +41,6 @@ later(function()
   require('mini.trailspace').setup()
 end)
 
--- key hints
-later(function()
-  local miniclue = require('mini.clue')
-  miniclue.setup({
-    window = {
-      delay = 200,
-    },
-
-    triggers = {
-      -- Leader triggers
-      { mode = 'n', keys = '<Leader>' },
-      { mode = 'x', keys = '<Leader>' },
-
-      -- Built-in completion
-      { mode = 'i', keys = '<C-x>' },
-
-      -- `g` key
-      { mode = 'n', keys = 'g' },
-      { mode = 'x', keys = 'g' },
-
-      -- Marks
-      { mode = 'n', keys = "'" },
-      { mode = 'n', keys = '`' },
-      { mode = 'x', keys = "'" },
-      { mode = 'x', keys = '`' },
-
-      -- Registers
-      { mode = 'n', keys = '"' },
-      { mode = 'x', keys = '"' },
-      { mode = 'i', keys = '<C-r>' },
-      { mode = 'c', keys = '<C-r>' },
-
-      -- Window commands
-      { mode = 'n', keys = '<C-w>' },
-
-      -- `z` key
-      { mode = 'n', keys = 'z' },
-      { mode = 'x', keys = 'z' },
-    },
-
-    clues = {
-      -- Enhance this by adding descriptions for <Leader> mapping groups
-      miniclue.gen_clues.builtin_completion(),
-      miniclue.gen_clues.g(),
-      miniclue.gen_clues.marks(),
-      miniclue.gen_clues.registers(),
-      miniclue.gen_clues.windows(),
-      miniclue.gen_clues.z(),
-    },
-  })
-end)
-
 -- file picker
 later(function()
   local window_config = function()
@@ -155,9 +103,107 @@ later(function()
 end)
 
 --
+-- basics, key hints
+later(function()
+  require('mini.basics').setup({
+    options = {
+      extra_ui = true,
+      win_borders = 'double',
+    },
+  })
+
+  local function generate_basics_clues(prefix, modes)
+    local clues = {}
+    local options = {
+      b = "Toggle 'background'",
+      c = "Toggle 'cursorline'",
+      C = "Toggle 'cursorcolumn'",
+      d = 'Toggle diagnostic',
+      h = "Toggle 'hlsearch'",
+      i = "Toggle 'ignorecase'",
+      l = "Toggle 'list'",
+      n = "Toggle 'number'",
+      r = "Toggle 'relativenumber'",
+      s = "Toggle 'spell'",
+      w = "Toggle 'wrap'",
+    }
+
+    for _, mode in ipairs(modes) do
+      for key, desc in pairs(options) do
+        table.insert(clues, { mode = mode, keys = prefix .. key, desc = desc })
+      end
+    end
+
+    return clues
+  end
+
+  local miniclue = require('mini.clue')
+  miniclue.setup({
+    triggers = {
+      -- leader
+      { mode = 'n', keys = '<Leader>' },
+      { mode = 'x', keys = '<Leader>' },
+
+      -- built-in completion
+      { mode = 'i', keys = '<C-x>' },
+
+      -- `g` key
+      { mode = 'n', keys = 'g' },
+      { mode = 'x', keys = 'g' },
+
+      -- marks
+      { mode = 'n', keys = "'" },
+      { mode = 'n', keys = '`' },
+      { mode = 'x', keys = "'" },
+      { mode = 'x', keys = '`' },
+
+      -- registers
+      { mode = 'n', keys = '"' },
+      { mode = 'x', keys = '"' },
+      { mode = 'i', keys = '<C-r>' },
+      { mode = 'c', keys = '<C-r>' },
+
+      -- window commands
+      { mode = 'n', keys = '<C-w>' },
+
+      -- `z` key
+      { mode = 'n', keys = 'z' },
+      { mode = 'x', keys = 'z' },
+
+      -- basics
+      { mode = 'n', keys = '\\' },
+      { mode = 'x', keys = '\\' },
+    },
+
+    clues = {
+      -- built-ins
+      miniclue.gen_clues.builtin_completion(),
+      miniclue.gen_clues.g(),
+      miniclue.gen_clues.marks(),
+      miniclue.gen_clues.registers(),
+      miniclue.gen_clues.windows(),
+      miniclue.gen_clues.z(),
+
+      -- custom
+      unpack(generate_basics_clues('\\', { 'n', 'x' })),
+    },
+
+    window = {
+      delay = 200,
+      config = {
+        width = 'auto',
+        border = 'single',
+        anchor = 'SE',
+      },
+      scroll_down = '<C-d>',
+      scroll_up = '<C-u>',
+    },
+  })
+end)
+
+--
 -- nvim
 now(function()
-  require('mini.basics').setup()
   vim.g.mapleader = ' '
   vim.o.number = true
   vim.o.relativenumber = true
