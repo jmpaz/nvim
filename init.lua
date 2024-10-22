@@ -32,13 +32,24 @@ later(function()
   require('mini.bracketed').setup()
   require('mini.comment').setup()
   require('mini.cursorword').setup()
-  require('mini.files').setup()
   require('mini.git').setup()
   require('mini.diff').setup()
   require('mini.pick').setup()
   require('mini.jump2d').setup()
   require('mini.surround').setup()
   require('mini.trailspace').setup()
+end)
+
+--
+-- files
+now(function()
+  require('mini.files').setup({
+    options = {
+      use_as_default_explorer = true,
+    },
+  })
+
+  vim.keymap.set('n', '-', function() require('mini.files').open() end)
 end)
 
 -- file picker
