@@ -85,31 +85,31 @@ later(function()
     'n',
     '<Space><Space>',
     function() vim.cmd('Pick files') end,
-    { noremap = true, silent = true, desc = 'Search project files' }
+    { noremap = true, silent = true, desc = 'project search' }
   )
   vim.keymap.set(
     'n',
     '<Space><S-Space>',
     function() vim.cmd('Pick buffers') end,
-    { noremap = true, silent = true, desc = 'Search open buffers' }
+    { noremap = true, silent = true, desc = 'open buffers' }
   )
   vim.keymap.set(
     'n',
     '<Space>sg',
     function() vim.cmd('Pick grep_live') end,
-    { noremap = true, silent = true, desc = 'Search text' }
+    { noremap = true, silent = true, desc = 'grep' }
   )
   vim.keymap.set(
     'n',
-    '<Space>sr',
+    '<Space>sc',
     function() vim.cmd('Pick resume') end,
-    { noremap = true, silent = true, desc = 'Resume search' }
+    { noremap = true, silent = true, desc = 'continue' }
   )
   vim.keymap.set(
     'n',
     '<Space>sh',
     function() vim.cmd('Pick help') end,
-    { noremap = true, silent = true, desc = 'Search help' }
+    { noremap = true, silent = true, desc = 'help' }
   )
 end)
 
@@ -197,6 +197,9 @@ later(function()
 
       -- custom
       unpack(generate_basics_clues('\\', { 'n', 'x' })),
+
+      -- Group-level clues
+      { mode = 'n', keys = '<Leader>s', desc = 'search' },
     },
 
     window = {
