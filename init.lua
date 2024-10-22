@@ -31,7 +31,10 @@ later(function()
   require('mini.ai').setup()
   require('mini.bracketed').setup()
   require('mini.comment').setup()
+  require('mini.completion').setup()
+  require('mini.indentscope').setup()
   require('mini.cursorword').setup()
+  require('mini.map').setup()
   require('mini.git').setup()
   require('mini.diff').setup()
   require('mini.pick').setup()
@@ -200,6 +203,8 @@ later(function()
 
       -- Group-level clues
       { mode = 'n', keys = '<Leader>s', desc = 'search' },
+      { mode = 'n', keys = '<Leader>b', desc = 'buffer' },
+      { mode = 'n', keys = '<Leader>t', desc = 'tab' },
     },
 
     window = {
@@ -287,6 +292,45 @@ later(function()
       silent = true,
     },
   })
+end)
+
+--
+-- tabs
+later(function()
+  -- Move between buffers
+  vim.keymap.set('n', '<S-h>', ':bprevious<CR>', { noremap = true, silent = true, desc = 'previous' })
+  vim.keymap.set('n', '<S-l>', ':bnext<CR>', { noremap = true, silent = true, desc = 'next' })
+
+  -- Leader key bindings for tab management
+  vim.keymap.set('n', '<Space>tn', ':tabnext<CR>', { noremap = true, silent = true, desc = 'next' })
+  vim.keymap.set('n', '<Space>tp', ':tabprevious<CR>', { noremap = true, silent = true, desc = 'prev' })
+  vim.keymap.set('n', '<Space>tc', ':tabnew<CR>', { noremap = true, silent = true, desc = 'create' })
+  vim.keymap.set('n', '<Space>tx', ':tabclose<CR>', { noremap = true, silent = true, desc = 'close' })
+end)
+
+--
+-- buffers
+later(function()
+  require('mini.bufremove').setup()
+
+  vim.keymap.set(
+    'n',
+    '<Space>bd',
+    '<cmd>lua MiniBufremove.delete()<CR>',
+    { noremap = true, silent = true, desc = 'delete' }
+  )
+  vim.keymap.set(
+    'n',
+    '<Space>bu',
+    '<cmd>lua MiniBufremove.unshow()<CR>',
+    { noremap = true, silent = true, desc = 'unshow' }
+  )
+  vim.keymap.set(
+    'n',
+    '<Space>bw',
+    '<cmd>lua MiniBufremove.wipeout()<CR>',
+    { noremap = true, silent = true, desc = 'wipeout' }
+  )
 end)
 
 --
