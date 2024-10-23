@@ -334,6 +334,14 @@ later(function()
 end)
 
 --
+-- kitty
+now(function()
+  add({
+    source = 'fladson/vim-kitty',
+  })
+end)
+
+--
 -- lsp/treesitter/none-ls
 now(function()
   -- lsp
