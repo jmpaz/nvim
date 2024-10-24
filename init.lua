@@ -55,6 +55,26 @@ now(function()
   vim.keymap.set('n', '-', function() require('mini.files').open() end)
 end)
 
+--
+-- move
+later(
+  function()
+    require('mini.move').setup({
+      mappings = {
+        left = '<S-Left>',
+        right = '<S-Right>',
+        down = '<S-Down>',
+        up = '<S-Up>',
+
+        line_left = '<S-Left>',
+        line_right = '<S-Right>',
+        line_down = '<S-Down>',
+        line_up = '<S-Up>',
+      },
+    })
+  end
+)
+
 -- file picker
 later(function()
   local window_config = function()
