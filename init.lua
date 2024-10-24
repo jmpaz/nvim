@@ -19,6 +19,10 @@ require('mini.deps').setup({ path = { package = path_package } })
 local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 
 now(function()
+  require('mini.starter').setup({
+    footer = '',
+  })
+
   require('mini.notify').setup()
   vim.notify = require('mini.notify').make_notify()
 
@@ -41,6 +45,8 @@ later(function()
   require('mini.jump2d').setup()
   require('mini.surround').setup()
   require('mini.trailspace').setup()
+  require('mini.hipatterns').setup()
+  require('mini.operators').setup()
 end)
 
 --
