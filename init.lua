@@ -376,16 +376,8 @@ now(function()
 end)
 
 --
--- lsp/treesitter/none-ls
+-- treesitter
 now(function()
-  -- lsp
-  add({
-    source = 'neovim/nvim-lspconfig',
-    depends = { 'williamboman/mason.nvim' },
-  })
-end)
-
-later(function()
   add({
     source = 'nvim-treesitter/nvim-treesitter',
     checkout = 'master',
@@ -394,12 +386,41 @@ later(function()
       post_checkout = function() vim.cmd('TSUpdate') end,
     },
   })
-  require('nvim-treesitter.configs').setup({
-    ensure_installed = { 'lua', 'vimdoc' },
-    highlight = { enable = true },
-  })
+  ensure_installed = {
+    'lua',
+    'python',
+    'rust',
+    'javascript',
+    'typescript',
+    'tsx',
+    'jsx',
+    'html',
+    'css',
+    'jsdoc',
+    'vimdoc',
+
+    -- markup/config
+    'yaml',
+    'toml',
+    'json',
+    'dockerfile',
+    'hcl',
+    'bash',
+    'markdown',
+
+    -- git
+    'git_config',
+    'git_rebase',
+    'gitcommit',
+    'gitignore',
+
+    -- other common formats
+    'regex',
+    'sql',
+  }
 end)
 
+-- none-ls
 later(function()
   add({
     source = 'nvimtools/none-ls.nvim',
@@ -417,6 +438,91 @@ later(function()
   vim.api.nvim_create_autocmd('BufWritePre', {
     pattern = '*.lua',
     callback = function() vim.lsp.buf.format({ async = false }) end,
+  })
+end)
+
+-- LSP
+now(function()
+  add({
+    source = 'neovim/nvim-lspconfig',
+    depends = { 'williamboman/mason.nvim', 'williamboman/mason-lspconfig.nvim' },
+  })
+  require('mason').setup()
+  require('mason-lspconfig').setup({
+    ensure_installed = { 'ruff_lsp', 'pyright' },
+    automatic_installation = true,
+  })
+
+  local ruff_client_id = nil
+  vim.api.nvim_create_autocmd('LspAttach', {
+    group = vim.api.nvim_create_augroup('lsp_attach_config', { clear = true }),
+    callback = function(args)
+      local client = vim.lsp.get_client_by_id(args.data.client_id)
+      if not client then return end
+
+      if client.name == 'ruff_lsp' then
+        ruff_client_id = client.id
+        -- disable hover in favor of Pyright
+        client.server_capabilities.hoverProvider = false
+      elseif client.name == 'pyright' then
+        -- disable Pyright diagnostics
+        client.server_capabilities.diagnosticProvider = false
+        client.server_capabilities.publishDiagnostics = false
+      end
+    end,
+  })
+
+  require('lspconfig').ruff_lsp.setup({
+    on_attach = function(client) client.server_capabilities.diagnosticProvider = true end,
+    init_options = {
+      settings = {
+        organizeImports = true,
+        fixAll = false,
+        lint = {
+          enable = true,
+        },
+      },
+    },
+  })
+
+  -- use Pyright for intellisense
+  require('lspconfig').pyright.setup({
+    on_attach = function(client)
+      client.server_capabilities.diagnosticProvider = false
+      client.server_capabilities.publishDiagnostics = false
+    end,
+    settings = {
+      pyright = {
+        disableOrganizeImports = true,
+      },
+      python = {
+        analysis = {
+          ignore = { '*' }, -- ignore all files
+        },
+      },
+    },
+  })
+
+  -- format on save
+  vim.api.nvim_create_autocmd('BufWritePre', {
+    pattern = '*.py',
+    callback = function(args)
+      -- organize imports
+      vim.lsp.buf.code_action({
+        context = {
+          only = { 'source.organizeImports' },
+          diagnostics = {},
+        },
+        apply = true,
+      })
+      -- format
+      if ruff_client_id then
+        vim.lsp.buf.format({
+          async = false,
+          filter = function(client) return client.id == ruff_client_id end,
+        })
+      end
+    end,
   })
 end)
 
