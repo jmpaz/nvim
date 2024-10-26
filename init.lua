@@ -23,9 +23,6 @@ now(function()
     footer = '',
   })
 
-  require('mini.notify').setup()
-  vim.notify = require('mini.notify').make_notify()
-
   require('mini.icons').setup()
   require('mini.tabline').setup()
   require('mini.statusline').setup()
@@ -523,6 +520,70 @@ now(function()
         })
       end
     end,
+  })
+end)
+
+--
+-- noice
+later(function()
+  add({
+    source = 'folke/noice.nvim',
+    depends = {
+      'MunifTanjim/nui.nvim',
+      -- 'rcarriga/nvim-notify',
+    },
+  })
+
+  require('noice').setup({
+    notify = { enabled = false },
+    lsp = {
+      -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+      override = {
+        ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
+        ['vim.lsp.util.stylize_markdown'] = true,
+        ['cmp.entry.get_documentation'] = true,
+      },
+    },
+    -- you can enable a preset for easier configuration
+    presets = {
+      bottom_search = true, -- use a classic bottom cmdline for search
+      command_palette = false, -- position the cmdline and popupmenu together
+      long_message_to_split = true, -- long messages will be sent to a split
+      inc_rename = true, -- enables an input dialog for inc-rename.nvim
+      lsp_doc_border = false, -- add a border to hover docs and signature help
+    },
+    routes = {
+      {
+        view = 'notify',
+        filter = {
+          { event = 'msg_showmode' },
+        },
+      },
+    },
+    views = {
+      cmdline_popup = {
+        position = {
+          row = 5,
+          col = '50%',
+        },
+        size = {
+          width = 60,
+          height = 'auto',
+        },
+      },
+      popupmenu = {
+        border = 'none',
+        win_options = {
+          winhighlight = 'Normal:Pmenu,FloatBorder:PmenuBorder',
+        },
+      },
+    },
+    routes = {
+      {
+        view = 'notify',
+        filter = { event = 'msg_showmode' },
+      },
+    },
   })
 end)
 
