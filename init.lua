@@ -210,6 +210,13 @@ later(function()
       -- basics
       { mode = 'n', keys = '\\' },
       { mode = 'x', keys = '\\' },
+
+      -- text objects
+      { mode = 'n', keys = 'v' },
+      { mode = 'x', keys = 'a' },
+      { mode = 'x', keys = 'i' },
+      { mode = 'o', keys = 'a' },
+      { mode = 'o', keys = 'i' },
     },
 
     clues = {
@@ -228,6 +235,29 @@ later(function()
       { mode = 'n', keys = '<Leader>s', desc = 'search' },
       { mode = 'n', keys = '<Leader>b', desc = 'buffer' },
       { mode = 'n', keys = '<Leader>t', desc = 'tab' },
+
+      -- text objects
+      { mode = 'x', keys = 'af', desc = 'around function' },
+      { mode = 'x', keys = 'if', desc = 'inside function' },
+      { mode = 'o', keys = 'af', desc = 'around function' },
+      { mode = 'o', keys = 'if', desc = 'inside function' },
+      { mode = 'n', keys = 'vaf', desc = 'select around function' },
+      { mode = 'n', keys = 'vif', desc = 'select inside function' },
+
+      -- Add class text objects clues too since we have them
+      { mode = 'x', keys = 'ac', desc = 'around class' },
+      { mode = 'x', keys = 'ic', desc = 'inside class' },
+      { mode = 'o', keys = 'ac', desc = 'around class' },
+      { mode = 'o', keys = 'ic', desc = 'inside class' },
+      { mode = 'n', keys = 'vac', desc = 'select around class' },
+      { mode = 'n', keys = 'vic', desc = 'select inside class' },
+
+      -- Group-level clues
+      { mode = 'x', keys = 'a', desc = 'around text object' },
+      { mode = 'x', keys = 'i', desc = 'inside text object' },
+      { mode = 'o', keys = 'a', desc = 'around text object' },
+      { mode = 'o', keys = 'i', desc = 'inside text object' },
+      { mode = 'n', keys = 'v', desc = 'select text object' },
     },
 
     window = {
@@ -383,38 +413,80 @@ now(function()
       post_checkout = function() vim.cmd('TSUpdate') end,
     },
   })
-  ensure_installed = {
-    'lua',
-    'python',
-    'rust',
-    'javascript',
-    'typescript',
-    'tsx',
-    'jsx',
-    'html',
-    'css',
-    'jsdoc',
-    'vimdoc',
 
-    -- markup/config
-    'yaml',
-    'toml',
-    'json',
-    'dockerfile',
-    'hcl',
-    'bash',
-    'markdown',
+  add({
+    source = 'nvim-treesitter/nvim-treesitter-textobjects',
+  })
 
-    -- git
-    'git_config',
-    'git_rebase',
-    'gitcommit',
-    'gitignore',
+  local treesitter = require('nvim-treesitter.configs')
+  treesitter.setup({
+    ensure_installed = {
+      'lua',
+      'python',
+      'rust',
+      'javascript',
+      'typescript',
+      'tsx',
+      'html',
+      'css',
+      'jsdoc',
+      'vimdoc',
 
-    -- other common formats
-    'regex',
-    'sql',
-  }
+      -- markup/config
+      'yaml',
+      'toml',
+      'json',
+      'dockerfile',
+      'hcl',
+      'bash',
+      'markdown',
+
+      -- git
+      'git_config',
+      'git_rebase',
+      'gitcommit',
+      'gitignore',
+
+      -- other common formats
+      'regex',
+      'sql',
+    },
+
+    textobjects = {
+      select = {
+        enable = true,
+        lookahead = true,
+        keymaps = {
+          -- You can use the capture groups defined in textobjects.scm
+          ['af'] = '@function.outer',
+          ['if'] = '@function.inner',
+          ['ac'] = '@class.outer',
+          ['ic'] = '@class.inner',
+        },
+        selection_modes = {
+          ['@function.outer'] = 'V', -- linewise
+          ['@function.inner'] = 'V', -- linewise
+          ['@class.outer'] = 'V', -- linewise
+          ['@class.inner'] = 'V', -- linewise
+        },
+        include_surrounding_whitespace = true,
+      },
+    },
+  })
+
+  later(function()
+    local spec = MiniAi.gen_spec.treesitter({
+      a = '@function.outer',
+      i = '@function.inner',
+    })
+
+    -- Setup mini.ai with the spec
+    require('mini.ai').setup({
+      custom_textobjects = {
+        f = spec,
+      },
+    })
+  end)
 end)
 
 -- none-ls
