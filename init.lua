@@ -523,6 +523,26 @@ now(function()
   })
 end)
 
+-- LSP rename
+later(function()
+  add({
+    source = 'smjonas/inc-rename.nvim',
+  })
+
+  require('inc_rename').setup({
+    show_message = true,
+    save_in_cmdline_history = false,
+  })
+
+  vim.keymap.set(
+    'n',
+    '<leader>rn',
+    function() return ':IncRename ' .. vim.fn.expand('<cword>') end,
+    { expr = true, desc = 'rename' }
+  )
+  vim.o.inccommand = 'split'
+end)
+
 --
 -- noice
 later(function()
