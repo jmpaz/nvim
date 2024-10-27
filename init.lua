@@ -47,6 +47,39 @@ later(function()
 end)
 
 --
+-- mappings
+now(function()
+  vim.keymap.set('n', ',', '<Nop>', { noremap = true, buffer = false })
+  vim.g.maplocalleader = ','
+
+  vim.keymap.set('n', '<localleader>w', ':w<CR>', { noremap = true, silent = true, desc = 'write' })
+  vim.keymap.set(
+    'n',
+    '<localleader><M-w>',
+    ':noautocmd w<CR>',
+    { noremap = true, silent = true, desc = 'write (skip format)' }
+  )
+
+  vim.keymap.set('n', '<localleader>q', ':q<CR>', { noremap = true, silent = true, desc = 'quit' })
+  vim.keymap.set('n', '<localleader><C-q>', ':q!<CR>', { noremap = true, silent = true, desc = 'quit without saving' })
+  vim.keymap.set('n', '<localleader><M-q>', ':qa<CR>', { noremap = true, silent = true, desc = 'quit all' })
+  vim.keymap.set('n', '<localleader><S-q>', ':wq<CR>', { noremap = true, silent = true, desc = 'write + quit' })
+
+  vim.keymap.set(
+    'n',
+    '<localleader><C-M-q>',
+    ':qa!<CR>',
+    { noremap = true, silent = true, desc = 'quit all without saving' }
+  )
+  vim.keymap.set('n', '<localleader><S-M-q>', ':wqa<CR>', { noremap = true, silent = true, desc = 'write + quit all' })
+
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = 'python',
+    callback = function() vim.cmd('redraw') end, -- Just do something trivial but non-empty
+  })
+end)
+
+--
 -- files
 now(function()
   require('mini.files').setup({
@@ -192,6 +225,7 @@ later(function()
       -- leader
       { mode = 'n', keys = '<Leader>' },
       { mode = 'x', keys = '<Leader>' },
+      { mode = 'n', keys = '<localleader>' },
 
       -- built-in completion
       { mode = 'i', keys = '<C-x>' },
