@@ -53,6 +53,18 @@ now(function()
     options = {
       use_as_default_explorer = true,
     },
+    mappings = {
+      go_in_plus = 'l',
+      go_in = 'L',
+      synchronize = '<CR>',
+      show_help = '?',
+    },
+    windows = {
+      preview = true,
+      width_focus = 40,
+      width_preview = 40,
+      width_nofocus = 20,
+    },
   })
 
   vim.keymap.set('n', '-', function() require('mini.files').open() end)
