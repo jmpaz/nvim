@@ -123,13 +123,13 @@ later(function()
     'n',
     '<Space><Space>',
     function() vim.cmd('Pick files') end,
-    { noremap = true, silent = true, desc = 'project search' }
+    { noremap = true, silent = true, desc = 'search files' }
   )
   vim.keymap.set(
     'n',
-    '<Space><S-Space>',
+    '<Space>sb',
     function() vim.cmd('Pick buffers') end,
-    { noremap = true, silent = true, desc = 'open buffers' }
+    { noremap = true, silent = true, desc = 'buffers' }
   )
   vim.keymap.set(
     'n',
@@ -403,6 +403,29 @@ later(function()
     '<Space>bw',
     '<cmd>lua MiniBufremove.wipeout()<CR>',
     { noremap = true, silent = true, desc = 'wipeout' }
+  )
+end)
+
+later(function()
+  add({
+    source = 'nvim-telescope/telescope.nvim',
+    depends = { 'nvim-lua/plenary.nvim' },
+  })
+
+  local telescope = require('telescope.builtin')
+
+  vim.keymap.set(
+    'n',
+    '<leader>o',
+    telescope.lsp_document_symbols,
+    { noremap = true, silent = true, desc = 'buffer symbols' }
+  )
+
+  vim.keymap.set(
+    'n',
+    '<leader>p',
+    telescope.lsp_dynamic_workspace_symbols,
+    { noremap = true, silent = true, desc = 'project symbols' }
   )
 end)
 
