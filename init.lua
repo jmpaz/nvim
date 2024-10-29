@@ -123,7 +123,8 @@ later(
   end
 )
 
--- file picker
+--
+-- pickers
 later(function()
   local window_config = function()
     local height = math.max(math.floor(0.7 * 0.618 * vim.o.lines), 10)
@@ -154,18 +155,6 @@ later(function()
 
   vim.keymap.set(
     'n',
-    '<Space><Space>',
-    function() vim.cmd('Pick files') end,
-    { noremap = true, silent = true, desc = 'search files' }
-  )
-  vim.keymap.set(
-    'n',
-    '<Space>sb',
-    function() vim.cmd('Pick buffers') end,
-    { noremap = true, silent = true, desc = 'buffers' }
-  )
-  vim.keymap.set(
-    'n',
     '<Space>sg',
     function() vim.cmd('Pick grep_live') end,
     { noremap = true, silent = true, desc = 'grep' }
@@ -181,6 +170,31 @@ later(function()
     '<Space>sh',
     function() vim.cmd('Pick help') end,
     { noremap = true, silent = true, desc = 'help' }
+  )
+end)
+
+later(function()
+  add({
+    source = 'danielfalk/smart-open.nvim',
+    checkout = '0.2.x',
+    hooks = {
+      post_install = function() require('telescope').load_extension('smart_open') end,
+    },
+    depends = {
+      'kkharji/sqlite.lua',
+      {
+        source = 'nvim-telescope/telescope-fzf-native.nvim',
+        hooks = { post_install = function() vim.cmd('make') end },
+      },
+      'nvim-telescope/telescope-fzy-native.nvim',
+    },
+  })
+
+  vim.keymap.set(
+    'n',
+    '<leader><leader>',
+    function() require('telescope').extensions.smart_open.smart_open() end,
+    { noremap = true, silent = true }
   )
 end)
 
@@ -716,9 +730,7 @@ later(function()
     routes = {
       {
         view = 'notify',
-        filter = {
-          { event = 'msg_showmode' },
-        },
+        filter = { event = 'msg_showmode' },
       },
     },
     views = {
@@ -737,12 +749,6 @@ later(function()
         win_options = {
           winhighlight = 'Normal:Pmenu,FloatBorder:PmenuBorder',
         },
-      },
-    },
-    routes = {
-      {
-        view = 'notify',
-        filter = { event = 'msg_showmode' },
       },
     },
   })
@@ -824,4 +830,22 @@ later(function()
       copilot = false,
     },
   })
+end)
+
+--
+-- vim
+later(function()
+  add({
+    source = 'tris203/precognition.nvim',
+  })
+
+  require('precognition').setup({
+    startVisible = false,
+    showBlankVirtLine = false,
+    G = { prio = 0 },
+    gg = { prio = 0 },
+  })
+
+  vim.keymap.set('n', '<leader>vp', ':Precognition toggle<CR>', { desc = 'toggle precognition' })
+  vim.keymap.set('n', '<localleader>p', ':Precognition peek<CR>', { desc = 'precognize' })
 end)
