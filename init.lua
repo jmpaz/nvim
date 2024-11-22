@@ -52,6 +52,9 @@ now(function()
   vim.keymap.set('n', ',', '<Nop>', { noremap = true, buffer = false })
   vim.g.maplocalleader = ','
 
+  vim.keymap.set('n', '<BS>', 'b', { noremap = true, desc = 'back one word' })
+  vim.keymap.set('n', '<S-BS>', 'B', { noremap = true, desc = 'back one WORD' })
+
   vim.keymap.set('n', '<localleader>w', ':w<CR>', { noremap = true, silent = true, desc = 'write' })
   vim.keymap.set(
     'n',
@@ -601,7 +604,7 @@ now(function()
   })
   require('mason').setup()
   require('mason-lspconfig').setup({
-    ensure_installed = { 'ruff_lsp', 'pyright' },
+    ensure_installed = { 'ruff', 'pyright' },
     automatic_installation = true,
   })
 
@@ -612,7 +615,7 @@ now(function()
       local client = vim.lsp.get_client_by_id(args.data.client_id)
       if not client then return end
 
-      if client.name == 'ruff_lsp' then
+      if client.name == 'ruff' then
         ruff_client_id = client.id
         -- disable hover in favor of Pyright
         client.server_capabilities.hoverProvider = false
@@ -624,7 +627,7 @@ now(function()
     end,
   })
 
-  require('lspconfig').ruff_lsp.setup({
+  require('lspconfig').ruff.setup({
     on_attach = function(client) client.server_capabilities.diagnosticProvider = true end,
     init_options = {
       settings = {
