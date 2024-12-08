@@ -80,6 +80,16 @@ now(function()
     pattern = 'python',
     callback = function() vim.cmd('redraw') end, -- Just do something trivial but non-empty
   })
+
+  vim.keymap.set('n', '\\H', function()
+    if vim.g.minitrailspace_disable then
+      vim.g.minitrailspace_disable = false
+      require('mini.trailspace').highlight()
+    else
+      vim.g.minitrailspace_disable = true
+      require('mini.trailspace').unhighlight()
+    end
+  end, { desc = 'Toggle trailing whitespace highlight' })
 end)
 
 --
