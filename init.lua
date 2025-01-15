@@ -364,6 +364,7 @@ now(function()
   vim.opt.iskeyword:append('-')
   vim.o.path = vim.o.path .. ',**'
   vim.o.termguicolors = true
+  vim.o.hidden = false
 end)
 
 --
@@ -846,7 +847,7 @@ later(function()
 end)
 
 --
--- vim
+-- precognition
 later(function()
   add({
     source = 'tris203/precognition.nvim',
