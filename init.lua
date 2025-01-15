@@ -113,8 +113,22 @@ now(function()
     },
   })
 
-  vim.keymap.set('n', '-', function() require('mini.files').open() end)
+  vim.keymap.set('n', '-', function()
+    -- Figure out directory of current buffer
+    local file_path = vim.fn.expand('%:p')
+    if file_path == '' then
+      -- Buffer is empty (like a new unsaved file)
+      file_path = vim.loop.cwd() -- fallback to current working dir
+    end
+    local dir = file_path
+    if vim.fn.isdirectory(file_path) == 0 then
+      dir = vim.fn.fnamemodify(file_path, ':h')
+    end
+
+    require('mini.files').open(dir)
+  end)
 end)
+
 
 --
 -- move
