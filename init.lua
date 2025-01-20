@@ -877,3 +877,10 @@ later(function()
   vim.keymap.set('n', '<leader>vp', ':Precognition toggle<CR>', { desc = 'toggle precognition' })
   vim.keymap.set('n', '<localleader>p', ':Precognition peek<CR>', { desc = 'precognize' })
 end)
+
+-- kdl
+now(function()
+  add({
+    source = 'imsnif/kdl.vim',
+  })
+end)
