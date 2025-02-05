@@ -381,6 +381,20 @@ now(function()
   vim.o.hidden = false
 end)
 
+-- indent
+now(function()
+  vim.api.nvim_create_autocmd("FileType", {
+    group = group,
+    pattern = { "lua", "md", "markdown" },
+    callback = function(args)
+      vim.opt_local.shiftwidth = 2
+      vim.opt_local.tabstop = 2
+      vim.opt_local.softtabstop = 2
+      vim.opt_local.expandtab = true
+    end,
+  })
+end)
+
 --
 -- colorscheme
 now(function()
@@ -888,7 +902,6 @@ later(function()
   -- index notebook
   map("n", "<leader>zx", "<Cmd>ZkIndex<CR>", "index")
 end)
-
 
 
 -- kdl
