@@ -719,9 +719,9 @@ later(function()
 
   vim.keymap.set(
     'n',
-    '<leader>rn',
+    '<localleader>r',
     function() return ':IncRename ' .. vim.fn.expand('<cword>') end,
-    { expr = true, desc = 'rename' }
+    { expr = true, desc = 'inc. rename' }
   )
   vim.o.inccommand = 'split'
 end)
@@ -792,22 +792,104 @@ later(function()
 end)
 
 --
--- precognition
+-- fzf
+now(function()
+  add({
+    source = "ibhagwan/fzf-lua",
+  })
+
+  require("fzf-lua").setup()
+end)
+
+--
+-- zk
+--
+now(function()
+  -- set buffer-local mapping for going to link definition in Markdown files
+  vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "markdown", "md" },
+    callback = function(args)
+      local bufnr = args.buf
+      local opts = { buffer = bufnr, noremap = true, silent = true, desc = "Go to linked note" }
+      vim.keymap.set("n", "gd", "<Cmd>lua vim.lsp.buf.definition()<CR>", opts)
+      vim.opt_local.conceallevel = 2
+    end,
+  })
+end)
+
 later(function()
   add({
-    source = 'tris203/precognition.nvim',
+    source = 'zk-org/zk-nvim',
   })
 
-  require('precognition').setup({
-    startVisible = false,
-    showBlankVirtLine = false,
-    G = { prio = 0 },
-    gg = { prio = 0 },
+  require('zk').setup({
+    picker = "fzf_lua",
+    lsp = {
+      auto_attach = {
+        enabled = true,
+        filetypes = { "markdown", "md" },
+      },
+    },
   })
 
-  vim.keymap.set('n', '<leader>vp', ':Precognition toggle<CR>', { desc = 'toggle precognition' })
-  vim.keymap.set('n', '<localleader>p', ':Precognition peek<CR>', { desc = 'precognize' })
+  local function map(mode, lhs, rhs, desc)
+    vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, desc = desc })
+  end
+
+  map("n", "<leader>z", "<Nop>", "zk")
+
+  -- create note
+  map("n", "<leader>zc", function()
+    vim.ui.input({ prompt = "note title: " }, function(input)
+      if input == nil then
+        return
+      end
+      vim.cmd(string.format("ZkNew { title = %q }", input))
+    end)
+  end, "create new")
+
+  map("v", "<leader>zc", "<Nop>", "create from selection")
+  map("v", "<leader>zct", ":'<,'>ZkNewFromTitleSelection<CR>", "title")
+  map("v", "<leader>zcc", ":'<,'>ZkNewFromContentSelection<CR>", "content")
+
+  -- create/open daily note
+  vim.api.nvim_create_user_command("ZkDaily", function()
+    local notebook = vim.env.ZK_NOTEBOOK_DIR
+    if not notebook or notebook == "" then
+      vim.notify("ZK_NOTEBOOK_DIR is not set", vim.log.levels.ERROR)
+      return
+    end
+    require("zk").new({
+      notebook_path = notebook,
+      dir = "journal/daily",
+    })
+  end, { desc = "Create daily note" })
+  map("n", "<leader>zd", "<Cmd>ZkDaily<CR>", "daily")
+
+  -- open notes by recency or via tag
+  map("n", "<leader>zo", "<Cmd>ZkNotes { sort = { 'modified' } }<CR>", "open")
+  map("n", "<leader>zt", "<Cmd>ZkTags<CR>", "tags")
+
+  -- search
+  map("n", "<leader>zs", function()
+    local query = vim.fn.input("search: ")
+    vim.cmd("ZkNotes { sort = { 'modified' }, match = { '" .. query .. "' } }")
+  end, "search")
+  map("v", "<leader>zs", ":'<,'>ZkMatch<CR>", "search")
+
+  -- insert link
+  map("n", "<leader>zk", "<Cmd>ZkInsertLink<CR>", "insert link")
+  map("v", "<leader>zk", ":'<,'>ZkInsertLinkAtSelection<CR>", "insert link")
+
+  -- open notes linking to/from the current buffer
+  map("n", "<leader>zl", "<Cmd>ZkLinks<CR>", "links out")
+  map("n", "<leader>zL", "<Cmd>ZkBacklinks<CR>", "links in (backlinks)")
+
+  -- index notebook
+  map("n", "<leader>zx", "<Cmd>ZkIndex<CR>", "index")
 end)
+
+
 
 -- kdl
 now(function()
