@@ -9,3 +9,18 @@ syn region markdownLink matchgroup=markdownLinkDelimiter start="(" end=")" conta
 " Markdown link text with concealends
 syn region markdownLinkText matchgroup=markdownLinkTextDelimiter start="!\=\[\%(\%(\_[^][]\|\[\_[^][]*\]\)*]\%( \=[[(]\)\)\@=" end="\]\%( \=[[(]\)\@=" nextgroup=markdownLink,markdownId skipwhite contains=@markdownInline,markdownLineStart concealends
 
+
+" Checkboxes
+"
+" Empty/checked box
+syntax match mdCheckboxUnchecked /\[\s*\]/ contained conceal cchar=□
+syntax match mdCheckboxChecked   /\[x\]/    contained conceal cchar=✓
+
+" Box with dash
+syntax match mdCheckboxEmpty   /\[-\]/ contained conceal cchar=▤
+"
+" Box with forward slash
+syntax match mdCheckboxPartial /\[\/\]/ contained conceal cchar=◩
+
+" Region for a bullet line that includes a checkbox state plus any other markdown inline syntax
+syntax region mdCheckboxLine start="^\s*[-+*]\s\+" end="$" keepend contains=mdCheckboxPartial,mdCheckboxEmpty,mdCheckboxChecked,mdCheckboxUnchecked,@markdownInline
