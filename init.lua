@@ -370,8 +370,9 @@ now(function()
   vim.o.list = true
   vim.o.listchars = table.concat({ 'extends:…', 'nbsp:␣', 'precedes:…', 'tab:> ' }, ',')
   vim.o.autoindent = true
-  vim.o.shiftwidth = 4
-  vim.o.tabstop = 4
+  vim.o.shiftwidth = 2
+  vim.o.tabstop = 2
+  vim.o.softtabstop = 2
   vim.o.expandtab = true
   vim.o.scrolloff = 10
   vim.o.updatetime = 1000
@@ -385,11 +386,11 @@ end)
 now(function()
   vim.api.nvim_create_autocmd("FileType", {
     group = group,
-    pattern = { "lua", "md", "markdown" },
+    pattern = { "python" },
     callback = function(args)
-      vim.opt_local.shiftwidth = 2
-      vim.opt_local.tabstop = 2
-      vim.opt_local.softtabstop = 2
+      vim.opt_local.shiftwidth = 4
+      vim.opt_local.tabstop = 4
+      vim.opt_local.softtabstop = 4
       vim.opt_local.expandtab = true
     end,
   })
