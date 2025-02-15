@@ -505,19 +505,42 @@ later(function()
 
   local telescope = require('telescope.builtin')
 
-  vim.keymap.set(
-    'n',
-    '<leader>o',
-    telescope.lsp_document_symbols,
-    { noremap = true, silent = true, desc = 'buffer symbols' }
-  )
+  -- vim.keymap.set(
+  --   'n',
+  --   '<leader>o',
+  --   telescope.lsp_document_symbols,
+  --   { noremap = true, silent = true, desc = 'buffer symbols' }
+  -- )
 
   vim.keymap.set(
     'n',
-    '<leader>p',
+    '<leader>sp',
     telescope.lsp_dynamic_workspace_symbols,
     { noremap = true, silent = true, desc = 'project symbols' }
   )
+end)
+
+later(function()
+  add({
+    source = 'bassamsdata/namu.nvim',
+  })
+
+  require("namu").setup({
+    namu_symbols = {
+      enable = true,
+      options = {
+        actions = {
+          close_on_yank = true,
+        },
+      },
+    },
+    ui_select = { enable = true },
+  })
+
+  vim.keymap.set("n", "<leader>so", require("namu.namu_symbols").show, {
+    desc = "local symbols",
+    silent = true,
+  })
 end)
 
 --
