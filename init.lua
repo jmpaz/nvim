@@ -901,6 +901,44 @@ later(function()
 end)
 
 --
+-- magenta
+now(function()
+  vim.fn.setenv("NODE_NO_WARNINGS", "1")
+end)
+
+later(function()
+  add({
+    source = 'dlants/magenta.nvim',
+    hooks = {
+      post_install = function()
+        vim.fn.system("npm install --frozen-lockfile")
+      end,
+    },
+  })
+
+  require('magenta').setup({
+    provider = 'bedrock',
+    bedrock = {
+      model = "us.anthropic.claude-3-5-sonnet-20241022-v2:0"
+    },
+    sidebar_position = 'right',
+    inline_keymaps =  {
+      normal = {
+        ["<C-CR>"] = function(target_bufnr)
+          vim.cmd("Magenta submit-inline-edit " .. target_bufnr)
+        end,
+      },
+    },
+    sidebar_keymaps = {
+      normal = {
+        ["<C-CR>"] = ":Magenta send<CR>",
+      },
+    },
+  })
+end)
+
+
+--
 -- code completion
 later(function()
   add({
