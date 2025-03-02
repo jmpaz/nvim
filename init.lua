@@ -919,7 +919,7 @@ later(function()
   require('magenta').setup({
     provider = 'bedrock',
     bedrock = {
-      model = "us.anthropic.claude-3-5-sonnet-20241022-v2:0"
+      model = "us.anthropic.claude-3-7-sonnet-20250219-v1:0"
     },
     sidebar_position = 'right',
     inline_keymaps =  {
