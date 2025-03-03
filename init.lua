@@ -739,6 +739,7 @@ later(function()
   })
 end)
 
+--
 -- LSP
 now(function()
   add({
@@ -747,7 +748,7 @@ now(function()
   })
   require('mason').setup()
   require('mason-lspconfig').setup({
-    ensure_installed = { 'ruff', 'pyright' },
+    ensure_installed = { 'ruff', 'pyright', 'gopls' },
     automatic_installation = true,
   })
 
@@ -783,7 +784,7 @@ now(function()
     },
   })
 
-  -- use Pyright for intellisense
+  -- Pyright
   require('lspconfig').pyright.setup({
     on_attach = function(client)
       client.server_capabilities.diagnosticProvider = false
@@ -799,6 +800,49 @@ now(function()
         },
       },
     },
+  })
+
+  -- gopls
+  require('lspconfig').gopls.setup({
+    on_attach = function(client, bufnr)
+      -- key mappings for Go (you can adjust as needed)
+      local opts = { noremap = true, silent = true }
+      vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+      vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+      vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+      vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+    end,
+    settings = {
+      gopls = {
+        analyses = {
+          unusedparams = true,
+        },
+        staticcheck = true,
+        gofumpt = true,
+      },
+    },
+  })
+
+  vim.api.nvim_create_autocmd('BufWritePre', {
+    pattern = '*.go',
+    callback = function()
+      local params = vim.lsp.util.make_range_params()
+      params.context = { only = { 'source.organizeImports' } }
+      local result = vim.lsp.buf_request_sync(0, 'textDocument/codeAction', params, 1000)
+      if result then
+        for _, res in pairs(result) do
+          for _, r in pairs(res.result or {}) do
+            if r.edit then
+              vim.lsp.util.apply_workspace_edit(r.edit, "utf-8")  -- Use lowercase encoding
+            else
+              vim.lsp.buf.execute_command(r.command)
+            end
+          end
+        end
+      end
+
+      vim.lsp.buf.format({ async = false })
+    end,
   })
 
   -- format on save
