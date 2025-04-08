@@ -1056,3 +1056,19 @@ now(function()
     source = 'imsnif/kdl.vim',
   })
 end)
+
+-- chezmoi
+later(function()
+  add({
+    source = 'xvzc/chezmoi.nvim',
+  })
+
+  require('telescope').load_extension('chezmoi')
+
+  vim.keymap.set(
+    'n',
+    '<leader>cz',
+    function() require('telescope').extensions.chezmoi.find_files() end,
+    { noremap = true, silent = true, desc = 'chezmoi files' }
+  )
+end)
