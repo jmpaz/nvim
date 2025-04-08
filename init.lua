@@ -418,7 +418,7 @@ now(function()
   })
 
   require('neopywal').setup({
-    use_wallust = true,
+    use_wallust = false,
   })
   vim.o.background = 'dark'
   vim.cmd.colorscheme('neopywal')
