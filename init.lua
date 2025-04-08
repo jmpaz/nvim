@@ -121,14 +121,11 @@ now(function()
       file_path = vim.loop.cwd() -- fallback to current working dir
     end
     local dir = file_path
-    if vim.fn.isdirectory(file_path) == 0 then
-      dir = vim.fn.fnamemodify(file_path, ':h')
-    end
+    if vim.fn.isdirectory(file_path) == 0 then dir = vim.fn.fnamemodify(file_path, ':h') end
 
     require('mini.files').open(dir)
   end)
 end)
-
 
 --
 -- move
@@ -376,9 +373,7 @@ now(function()
   vim.o.path = vim.o.path .. ',**'
   vim.o.termguicolors = true
   vim.o.hidden = false
-
 end)
-
 
 -- indent
 now(function()
@@ -387,8 +382,8 @@ now(function()
   vim.o.softtabstop = 2
   vim.o.expandtab = true
 
-  vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "markdown" },
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = { 'markdown' },
     callback = function()
       vim.opt_local.shiftwidth = 2
       vim.opt_local.tabstop = 2
@@ -397,9 +392,9 @@ now(function()
     end,
   })
 
-  vim.api.nvim_create_autocmd("FileType", {
+  vim.api.nvim_create_autocmd('FileType', {
     group = group,
-    pattern = { "python" },
+    pattern = { 'python' },
     callback = function(args)
       vim.opt_local.shiftwidth = 4
       vim.opt_local.tabstop = 4
@@ -428,22 +423,22 @@ end)
 later(function()
   add({
     source = 'kevinhwang91/nvim-ufo',
-    depends = { 'kevinhwang91/promise-async' }
+    depends = { 'kevinhwang91/promise-async' },
   })
 
-  vim.o.foldcolumn = '0'         -- hide fold column
-  vim.o.foldlevel = 99           -- start with all folds open
+  vim.o.foldcolumn = '0' -- hide fold column
+  vim.o.foldlevel = 99 -- start with all folds open
   vim.o.foldlevelstart = 99
   vim.o.foldenable = true
 
   vim.opt.fillchars = {
-    eob = ' ',      -- end-of-buffer filler
-    fold = ' ',     -- filler for closed folds
+    eob = ' ', -- end-of-buffer filler
+    fold = ' ', -- filler for closed folds
     foldsep = ' ',
     foldopen = '▾',
     foldclose = '▸',
   }
-  vim.cmd("highlight! link Folded Comment")
+  vim.cmd('highlight! link Folded Comment')
 
   -- (optional) extend LSP capabilities so foldingRange is supported
   -- local lsp_capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -455,11 +450,11 @@ later(function()
 
   -- custom fold text handler
   local handler = function(virtText, lnum, endLnum, width, truncate)
-    local fold_icon = vim.opt.fillchars:get().foldclose or "▸"
+    local fold_icon = vim.opt.fillchars:get().foldclose or '▸'
     local line = vim.fn.getline(lnum)
     line = line:gsub('\t', string.rep(' ', vim.o.tabstop))
     local count = endLnum - lnum + 1
-    local suffix = string.format(" ... [%d]", count) -- TODO: remove explicit count and add a dot per n lines (up to 10, proportional to the longest fold in buffer)
+    local suffix = string.format(' ... [%d]', count) -- TODO: remove explicit count and add a dot per n lines (up to 10, proportional to the longest fold in buffer)
     local sufWidth = vim.fn.strdisplaywidth(suffix)
     local targetWidth = width - sufWidth
     local curWidth = 0
@@ -482,25 +477,20 @@ later(function()
   end
 
   require('ufo').setup({
-    provider_selector = function(bufnr, filetype, buftype)
-      return { 'lsp', 'indent' }
-    end,
+    provider_selector = function(bufnr, filetype, buftype) return { 'lsp', 'indent' } end,
     fold_virt_text_handler = handler,
   })
 
-  vim.keymap.set('n', 'zR', require('ufo').openAllFolds, { desc = "Open all folds" })
-  vim.keymap.set('n', 'zM', require('ufo').closeAllFolds, { desc = "Close all folds" })
-  vim.keymap.set('n', 'zr', require('ufo').openFoldsExceptKinds, { desc = "Open folds except kinds" })
-  vim.keymap.set('n', 'zm', function() require('ufo').closeFoldsWith(1) end, { desc = "Close folds with level 1" })
+  vim.keymap.set('n', 'zR', require('ufo').openAllFolds, { desc = 'Open all folds' })
+  vim.keymap.set('n', 'zM', require('ufo').closeAllFolds, { desc = 'Close all folds' })
+  vim.keymap.set('n', 'zr', require('ufo').openFoldsExceptKinds, { desc = 'Open folds except kinds' })
+  vim.keymap.set('n', 'zm', function() require('ufo').closeFoldsWith(1) end, { desc = 'Close folds with level 1' })
 
   vim.keymap.set('n', 'K', function()
     local winid = require('ufo').peekFoldedLinesUnderCursor()
-    if not winid then
-      vim.lsp.buf.hover()
-    end
-  end, { desc = "Hover or peek fold" })
+    if not winid then vim.lsp.buf.hover() end
+  end, { desc = 'Hover or peek fold' })
 end)
-
 
 --
 -- splits
@@ -616,7 +606,7 @@ later(function()
     source = 'bassamsdata/namu.nvim',
   })
 
-  require("namu").setup({
+  require('namu').setup({
     namu_symbols = {
       enable = true,
       options = {
@@ -628,8 +618,8 @@ later(function()
     ui_select = { enable = true },
   })
 
-  vim.keymap.set("n", "<leader>so", require("namu.namu_symbols").show, {
-    desc = "local symbols",
+  vim.keymap.set('n', '<leader>so', require('namu.namu_symbols').show, {
+    desc = 'local symbols',
     silent = true,
   })
 end)
@@ -844,7 +834,7 @@ now(function()
         for _, res in pairs(result) do
           for _, r in pairs(res.result or {}) do
             if r.edit then
-              vim.lsp.util.apply_workspace_edit(r.edit, "utf-8")  -- Use lowercase encoding
+              vim.lsp.util.apply_workspace_edit(r.edit, 'utf-8') -- Use lowercase encoding
             else
               vim.lsp.buf.execute_command(r.command)
             end
@@ -956,44 +946,6 @@ later(function()
 end)
 
 --
--- magenta
-now(function()
-  vim.fn.setenv("NODE_NO_WARNINGS", "1")
-end)
-
-later(function()
-  add({
-    source = 'dlants/magenta.nvim',
-    hooks = {
-      post_install = function()
-        vim.fn.system("npm install --frozen-lockfile")
-      end,
-    },
-  })
-
-  require('magenta').setup({
-    provider = 'bedrock',
-    bedrock = {
-      model = "us.anthropic.claude-3-7-sonnet-20250219-v1:0"
-    },
-    sidebar_position = 'right',
-    inline_keymaps =  {
-      normal = {
-        ["<C-CR>"] = function(target_bufnr)
-          vim.cmd("Magenta submit-inline-edit " .. target_bufnr)
-        end,
-      },
-    },
-    sidebar_keymaps = {
-      normal = {
-        ["<C-CR>"] = ":Magenta send<CR>",
-      },
-    },
-  })
-end)
-
-
---
 -- code completion
 later(function()
   add({
@@ -1006,10 +958,10 @@ end)
 -- fzf
 now(function()
   add({
-    source = "ibhagwan/fzf-lua",
+    source = 'ibhagwan/fzf-lua',
   })
 
-  require("fzf-lua").setup()
+  require('fzf-lua').setup()
 end)
 
 --
@@ -1017,12 +969,12 @@ end)
 --
 now(function()
   -- set buffer-local mapping for going to link definition in Markdown files
-  vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "markdown", "md" },
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = { 'markdown', 'md' },
     callback = function(args)
       local bufnr = args.buf
-      local opts = { buffer = bufnr, noremap = true, silent = true, desc = "Go to linked note" }
-      vim.keymap.set("n", "gd", "<Cmd>lua vim.lsp.buf.definition()<CR>", opts)
+      local opts = { buffer = bufnr, noremap = true, silent = true, desc = 'Go to linked note' }
+      vim.keymap.set('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
       vim.opt_local.conceallevel = 2
     end,
   })
@@ -1034,11 +986,11 @@ later(function()
   })
 
   require('zk').setup({
-    picker = "fzf_lua",
+    picker = 'fzf_lua',
     lsp = {
       auto_attach = {
         enabled = true,
-        filetypes = { "markdown", "md" },
+        filetypes = { 'markdown', 'md' },
       },
     },
   })
@@ -1047,59 +999,56 @@ later(function()
     vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, desc = desc })
   end
 
-  map("n", "<leader>z", "<Nop>", "zk")
+  map('n', '<leader>z', '<Nop>', 'zk')
 
   -- create note
-  map("n", "<leader>zc", function()
-    vim.ui.input({ prompt = "note title: " }, function(input)
-      if input == nil then
-        return
-      end
-      vim.cmd(string.format("ZkNew { title = %q }", input))
+  map('n', '<leader>zc', function()
+    vim.ui.input({ prompt = 'note title: ' }, function(input)
+      if input == nil then return end
+      vim.cmd(string.format('ZkNew { title = %q }', input))
     end)
-  end, "create new")
+  end, 'create new')
 
-  map("v", "<leader>zc", "<Nop>", "create from selection")
-  map("v", "<leader>zct", ":'<,'>ZkNewFromTitleSelection<CR>", "title")
-  map("v", "<leader>zcc", ":'<,'>ZkNewFromContentSelection<CR>", "content")
+  map('v', '<leader>zc', '<Nop>', 'create from selection')
+  map('v', '<leader>zct', ":'<,'>ZkNewFromTitleSelection<CR>", 'title')
+  map('v', '<leader>zcc', ":'<,'>ZkNewFromContentSelection<CR>", 'content')
 
   -- create/open daily note
-  vim.api.nvim_create_user_command("ZkDaily", function()
+  vim.api.nvim_create_user_command('ZkDaily', function()
     local notebook = vim.env.ZK_NOTEBOOK_DIR
-    if not notebook or notebook == "" then
-      vim.notify("ZK_NOTEBOOK_DIR is not set", vim.log.levels.ERROR)
+    if not notebook or notebook == '' then
+      vim.notify('ZK_NOTEBOOK_DIR is not set', vim.log.levels.ERROR)
       return
     end
-    require("zk").new({
+    require('zk').new({
       notebook_path = notebook,
-      dir = "journal/daily",
+      dir = 'journal/daily',
     })
-  end, { desc = "Create daily note" })
-  map("n", "<leader>zd", "<Cmd>ZkDaily<CR>", "daily")
+  end, { desc = 'Create daily note' })
+  map('n', '<leader>zd', '<Cmd>ZkDaily<CR>', 'daily')
 
   -- open notes by recency or via tag
-  map("n", "<leader>zo", "<Cmd>ZkNotes { sort = { 'modified' } }<CR>", "open")
-  map("n", "<leader>zt", "<Cmd>ZkTags<CR>", "tags")
+  map('n', '<leader>zo', "<Cmd>ZkNotes { sort = { 'modified' } }<CR>", 'open')
+  map('n', '<leader>zt', '<Cmd>ZkTags<CR>', 'tags')
 
   -- search
-  map("n", "<leader>zs", function()
-    local query = vim.fn.input("search: ")
+  map('n', '<leader>zs', function()
+    local query = vim.fn.input('search: ')
     vim.cmd("ZkNotes { sort = { 'modified' }, match = { '" .. query .. "' } }")
-  end, "search")
-  map("v", "<leader>zs", ":'<,'>ZkMatch<CR>", "search")
+  end, 'search')
+  map('v', '<leader>zs', ":'<,'>ZkMatch<CR>", 'search')
 
   -- insert link
-  map("n", "<leader>zk", "<Cmd>ZkInsertLink<CR>", "insert link")
-  map("v", "<leader>zk", ":'<,'>ZkInsertLinkAtSelection<CR>", "insert link")
+  map('n', '<leader>zk', '<Cmd>ZkInsertLink<CR>', 'insert link')
+  map('v', '<leader>zk', ":'<,'>ZkInsertLinkAtSelection<CR>", 'insert link')
 
   -- open notes linking to/from the current buffer
-  map("n", "<leader>zl", "<Cmd>ZkLinks<CR>", "links out")
-  map("n", "<leader>zL", "<Cmd>ZkBacklinks<CR>", "links in (backlinks)")
+  map('n', '<leader>zl', '<Cmd>ZkLinks<CR>', 'links out')
+  map('n', '<leader>zL', '<Cmd>ZkBacklinks<CR>', 'links in (backlinks)')
 
   -- index notebook
-  map("n", "<leader>zx", "<Cmd>ZkIndex<CR>", "index")
+  map('n', '<leader>zx', '<Cmd>ZkIndex<CR>', 'index')
 end)
-
 
 -- kdl
 now(function()
