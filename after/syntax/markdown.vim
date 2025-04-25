@@ -9,6 +9,8 @@ syn region markdownLink matchgroup=markdownLinkDelimiter start="(" end=")" conta
 " Markdown link text with concealends
 syn region markdownLinkText matchgroup=markdownLinkTextDelimiter start="!\=\[\%(\%(\_[^][]\|\[\_[^][]*\]\)*]\%( \=[[(]\)\)\@=" end="\]\%( \=[[(]\)\@=" nextgroup=markdownLink,markdownId skipwhite contains=@markdownInline,markdownLineStart concealends
 
+" Allow Markdown links wrapped in single or double quotes (e.g. "[foo](bar)")
+syn match markdownLinkQuoted /\v(['"])\zs\[[^]]+\]\([^)]*\)\ze\1/ contained nextgroup=markdownLink,markdownLinkText
 
 " Checkboxes
 "
