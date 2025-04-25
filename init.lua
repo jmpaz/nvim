@@ -624,6 +624,25 @@ later(function()
   })
 end)
 
+-- simple-zoom
+later(function()
+  -- install simple-zoom
+  add({
+    source = 'fasterius/simple-zoom.nvim',
+  })
+
+  require('simple-zoom').setup({
+    hide_tabline = false,
+  })
+
+  vim.keymap.set(
+    'n',
+    'z ',  -- z followed by space
+    require('simple-zoom').toggle_zoom,
+    { noremap = true, silent = true, desc = 'Toggle zoom' }
+  )
+end)
+
 --
 -- kitty
 now(function()
