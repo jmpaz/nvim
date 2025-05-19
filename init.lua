@@ -1046,6 +1046,13 @@ later(function()
   end, { desc = 'Create daily note' })
   map('n', '<leader>zd', '<Cmd>ZkDaily<CR>', 'daily')
 
+  -- open daily context
+  map('n', '<leader>zD', function()
+    local nb = vim.env.ZK_NOTEBOOK_DIR or vim.loop.cwd()
+    local file = nb .. '/journal/daily/context.yaml'
+    vim.cmd('edit ' .. vim.fn.fnameescape(file))
+  end, 'daily: ctx')
+
   -- open notes by recency or via tag
   map('n', '<leader>zo', "<Cmd>ZkNotes { sort = { 'modified' } }<CR>", 'open')
   map('n', '<leader>zt', '<Cmd>ZkTags<CR>', 'tags')
