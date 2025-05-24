@@ -1,0 +1,123 @@
+local M = {}
+
+function M.setup()
+  local now, add = MiniDeps.now, MiniDeps.add
+  now(function()
+    add({
+      source = 'neovim/nvim-lspconfig',
+      depends = { 'williamboman/mason.nvim', 'williamboman/mason-lspconfig.nvim' },
+    })
+    require('mason').setup()
+    require('mason-lspconfig').setup({
+      ensure_installed = { 'ruff', 'pyright', 'gopls' },
+      automatic_installation = true,
+    })
+
+    local ruff_client_id = nil
+    vim.api.nvim_create_autocmd('LspAttach', {
+      group = vim.api.nvim_create_augroup('lsp_attach_config', { clear = true }),
+      callback = function(args)
+        local client = vim.lsp.get_client_by_id(args.data.client_id)
+        if not client then return end
+        if client.name == 'ruff' then
+          ruff_client_id = client.id
+          client.server_capabilities.hoverProvider = false
+        elseif client.name == 'pyright' then
+          client.server_capabilities.diagnosticProvider = false
+          client.server_capabilities.publishDiagnostics = false
+        end
+      end,
+    })
+
+    require('lspconfig').ruff.setup({
+      on_attach = function(client) client.server_capabilities.diagnosticProvider = true end,
+      init_options = {
+        settings = {
+          organizeImports = true,
+          fixAll = false,
+          lint = {
+            enable = true,
+          },
+        },
+      },
+    })
+
+    require('lspconfig').pyright.setup({
+      on_attach = function(client)
+        client.server_capabilities.diagnosticProvider = false
+        client.server_capabilities.publishDiagnostics = false
+      end,
+      settings = {
+        pyright = {
+          disableOrganizeImports = true,
+        },
+        python = {
+          analysis = {
+            ignore = { '*' },
+          },
+        },
+      },
+    })
+
+    require('lspconfig').gopls.setup({
+      on_attach = function(_, bufnr)
+        local opts = { noremap = true, silent = true }
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+      end,
+      settings = {
+        gopls = {
+          analyses = {
+            unusedparams = true,
+          },
+          staticcheck = true,
+          gofumpt = true,
+        },
+      },
+    })
+
+    vim.api.nvim_create_autocmd('BufWritePre', {
+      pattern = '*.go',
+      callback = function()
+        local params = vim.lsp.util.make_range_params()
+        params.context = { only = { 'source.organizeImports' } }
+        local result = vim.lsp.buf_request_sync(0, 'textDocument/codeAction', params, 1000)
+        if result then
+          for _, res in pairs(result) do
+            for _, r in pairs(res.result or {}) do
+              if r.edit then
+                vim.lsp.util.apply_workspace_edit(r.edit, 'utf-8')
+              else
+                vim.lsp.buf.execute_command(r.command)
+              end
+            end
+          end
+        end
+        vim.lsp.buf.format({ async = false })
+      end,
+    })
+
+    vim.api.nvim_create_autocmd('BufWritePre', {
+      pattern = '*.py',
+      callback = function()
+        vim.lsp.buf.code_action({
+          context = {
+            only = { 'source.organizeImports' },
+            diagnostics = {},
+          },
+          apply = true,
+        })
+        if ruff_client_id then
+          vim.lsp.buf.format({
+            async = false,
+            filter = function(client) return client.id == ruff_client_id end,
+          })
+        end
+      end,
+    })
+  end)
+end
+
+return M
