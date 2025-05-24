@@ -13,11 +13,17 @@ function M.setup()
       sources = {
         null_ls.builtins.formatting.stylua,
       },
-    })
-
-    vim.api.nvim_create_autocmd('BufWritePre', {
-      pattern = '*.lua',
-      callback = function() vim.lsp.buf.format({ async = false }) end,
+      on_attach = function(client, bufnr)
+        if client.supports_method('textDocument/formatting') then
+          vim.api.nvim_create_autocmd('BufWritePre', {
+            group = vim.api.nvim_create_augroup('LspFormatting', {}),
+            buffer = bufnr,
+            callback = function()
+              vim.lsp.buf.format({ async = false })
+            end,
+          })
+        end
+      end,
     })
   end)
 end
