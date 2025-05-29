@@ -54,13 +54,14 @@ function M.setup()
       fold_virt_text_handler = handler,
     })
 
-    vim.keymap.set('n', 'zR', require('ufo').openAllFolds, { desc = 'Open all folds' })
-    vim.keymap.set('n', 'zM', require('ufo').closeAllFolds, { desc = 'Close all folds' })
-    vim.keymap.set('n', 'zr', require('ufo').openFoldsExceptKinds, { desc = 'Open folds except kinds' })
-    vim.keymap.set('n', 'zm', function() require('ufo').closeFoldsWith(1) end, { desc = 'Close folds with level 1' })
+    local ufo = require('ufo')
+    vim.keymap.set('n', 'zR', ufo.openAllFolds, { desc = 'Open all folds' })
+    vim.keymap.set('n', 'zM', ufo.closeAllFolds, { desc = 'Close all folds' })
+    vim.keymap.set('n', 'zr', function() ufo.openFoldsExceptKinds() end, { desc = 'Open folds except kinds' })
+    vim.keymap.set('n', 'zm', function() ufo.closeFoldsWith(1) end, { desc = 'Close folds with level 1' })
 
     vim.keymap.set('n', 'K', function()
-      local winid = require('ufo').peekFoldedLinesUnderCursor()
+      local winid = ufo.peekFoldedLinesUnderCursor()
       if not winid then vim.lsp.buf.hover() end
     end, { desc = 'Hover or peek fold' })
   end)

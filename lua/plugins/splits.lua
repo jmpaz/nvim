@@ -27,7 +27,7 @@ function M.setup()
     vim.keymap.set('n', '<C-M-k>', function() smart_splits.swap_buf_up({ move_cursor = true }) end)
     vim.keymap.set('n', '<C-M-l>', function() smart_splits.swap_buf_right({ move_cursor = true }) end)
 
-    vim.keymap.set('n', '<C-w>r', smart_splits.start_resize_mode)
+    vim.keymap.set('n', '<C-w>r', function() smart_splits.start_resize_mode() end)
 
     smart_splits.setup({
       resize_mode = {

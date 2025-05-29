@@ -17,6 +17,7 @@ function M.setup()
   later(function()
     add({
       source = 'zk-org/zk-nvim',
+      checkout = 'v0.3.0',
     })
 
     require('zk').setup({
@@ -33,7 +34,7 @@ function M.setup()
       vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, desc = desc })
     end
 
-    map('n', '<leader>z', '<Nop>', 'zk')
+    map('n', '<leader>z', function() end, 'zk')
 
     map('n', '<leader>zc', function()
       vim.ui.input({ prompt = 'note title: ' }, function(input)
@@ -42,7 +43,7 @@ function M.setup()
       end)
     end, 'create new')
 
-    map('v', '<leader>zc', '<Nop>', 'create from selection')
+    map('v', '<leader>zc', function() end, 'create from selection')
     map('v', '<leader>zct', ":'<,'>ZkNewFromTitleSelection<CR>", 'title')
     map('v', '<leader>zcc', ":'<,'>ZkNewFromContentSelection<CR>", 'content')
 
