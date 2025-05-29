@@ -8,7 +8,7 @@ function M.setup()
       callback = function(args)
         local bufnr = args.buf
         local opts = { buffer = bufnr, noremap = true, silent = true, desc = 'Go to linked note' }
-        vim.keymap.set('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+        vim.keymap.set('n', 'gd', function() pcall(vim.lsp.buf.definition) end, opts)
         vim.opt_local.conceallevel = 2
       end,
     })
@@ -59,6 +59,18 @@ function M.setup()
       })
     end, { desc = 'Create daily note' })
     map('n', '<leader>zd', '<Cmd>ZkDaily<CR>', 'daily')
+
+    vim.api.nvim_create_user_command('ZkWeekly', function()
+      local nb = vim.env.ZK_NOTEBOOK_DIR
+      if not nb or nb == '' then
+        vim.notify('ZK_NOTEBOOK_DIR is not set', vim.log.levels.ERROR)
+        return
+      end
+      local note = os.date('%Y-W%V') .. '.md'
+      local file = nb .. '/journal/weekly/' .. note
+      vim.cmd('edit ' .. vim.fn.fnameescape(file))
+    end, { desc = 'open weekly note' })
+    map('n', '<leader>zw', '<Cmd>ZkWeekly<CR>', 'weekly')
 
     map('n', '<leader>zD', function()
       local nb = vim.env.ZK_NOTEBOOK_DIR or vim.loop.cwd()
