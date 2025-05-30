@@ -62,7 +62,19 @@ function M.setup()
     require('lspconfig').gopls.setup({
       on_attach = function(_, bufnr)
         local opts = { noremap = true, silent = true }
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+        local patch = require('config.lsp_patch')
+        vim.keymap.set(
+          'n',
+          'gd',
+          function() patch.goto_definition(false) end,
+          vim.tbl_extend('force', opts, { buffer = bufnr })
+        )
+        vim.keymap.set(
+          'n',
+          'g ',
+          function() patch.goto_definition(true) end,
+          vim.tbl_extend('force', opts, { buffer = bufnr })
+        )
         vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)

@@ -8,7 +8,9 @@ function M.setup()
       callback = function(args)
         local bufnr = args.buf
         local opts = { buffer = bufnr, noremap = true, silent = true, desc = 'Go to linked note' }
-        vim.keymap.set('n', 'gd', function() pcall(vim.lsp.buf.definition) end, opts)
+        local patch = require('config.lsp_patch')
+        vim.keymap.set('n', 'gd', function() patch.goto_definition(false) end, opts)
+        vim.keymap.set('n', 'g ', function() patch.goto_definition(true) end, opts)
         vim.opt_local.conceallevel = 2
       end,
     })

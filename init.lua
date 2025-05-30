@@ -20,6 +20,7 @@ local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 
 require('config.options')()
 require('config.keymaps')()
+require('config.lsp_patch').setup()
 
 now(function()
   require('mini.starter').setup({ footer = '' })
