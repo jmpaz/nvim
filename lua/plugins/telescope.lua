@@ -17,12 +17,7 @@ function M.setup()
       { noremap = true, silent = true, desc = 'project symbols' }
     )
 
-    vim.keymap.set(
-      'n',
-      '<leader><leader>',
-      telescope.find_files,
-      { noremap = true, silent = true, desc = 'find files' }
-    )
+    vim.keymap.set('n', '<leader><leader>', telescope.find_files, { noremap = true, silent = true, desc = 'find file' })
   end)
 end
 

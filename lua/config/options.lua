@@ -13,6 +13,10 @@ return function()
   vim.o.termguicolors = true
   vim.o.hidden = false
 
+  vim.o.mouse = 'a'
+  vim.o.mousescroll = 'ver:1,hor:4'
+  vim.o.mousemoveevent = true
+
   vim.o.shiftwidth = 2
   vim.o.tabstop = 2
   vim.o.softtabstop = 2
