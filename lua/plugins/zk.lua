@@ -22,7 +22,8 @@ function M.setup()
       checkout = 'v0.3.0',
     })
 
-    require('zk').setup({
+    local zk = require('zk')
+    zk.setup({
       picker = 'fzf_lua',
       lsp = {
         auto_attach = {
@@ -31,6 +32,29 @@ function M.setup()
         },
       },
     })
+
+    do
+      local api = require('zk.api')
+
+      local function open(path)
+        local cur = vim.api.nvim_get_current_buf()
+        local restore = false
+        if vim.bo[cur].modified and not vim.o.hidden then
+          vim.o.hidden = true
+          restore = true
+        end
+        vim.cmd('edit ' .. vim.fn.fnameescape(path))
+        if restore then vim.o.hidden = false end
+      end
+
+      zk.new = function(opts)
+        opts = opts or {}
+        api.new(opts.notebook_path, opts, function(err, res)
+          assert(not err, tostring(err))
+          if opts.dryRun ~= true and opts.edit ~= false then open(res.path) end
+        end)
+      end
+    end
 
     local function map(mode, lhs, rhs, desc)
       vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, desc = desc })
