@@ -10,9 +10,7 @@ function M.setup()
   end)
 
   later(function()
-    add({
-      source = 'mrjones2014/smart-splits.nvim',
-    })
+    add({ source = 'mrjones2014/smart-splits.nvim' })
 
     local smart_splits = require('smart-splits')
 
@@ -27,15 +25,12 @@ function M.setup()
     vim.keymap.set('n', '<C-M-k>', function() smart_splits.swap_buf_up({ move_cursor = true }) end)
     vim.keymap.set('n', '<C-M-l>', function() smart_splits.swap_buf_right({ move_cursor = true }) end)
 
-    vim.keymap.set('n', '<C-w>r', function() smart_splits.start_resize_mode() end)
+    vim.keymap.set('n', '<C-S-h>', smart_splits.resize_left)
+    vim.keymap.set('n', '<C-S-j>', smart_splits.resize_down)
+    vim.keymap.set('n', '<C-S-k>', smart_splits.resize_up)
+    vim.keymap.set('n', '<C-S-l>', smart_splits.resize_right)
 
-    smart_splits.setup({
-      resize_mode = {
-        quit_key = '<ESC>',
-        resize_keys = { 'h', 'j', 'k', 'l' },
-        silent = true,
-      },
-    })
+    smart_splits.setup()
   end)
 end
 
