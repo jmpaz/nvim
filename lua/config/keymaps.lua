@@ -56,8 +56,8 @@ return function()
   end)
 
   later(function()
-    vim.keymap.set('n', '<S-h>', ':bprevious<CR>', { noremap = true, silent = true, desc = 'previous' })
-    vim.keymap.set('n', '<S-l>', ':bnext<CR>', { noremap = true, silent = true, desc = 'next' })
+    vim.keymap.set('n', '<S-h>', ':bprevious!<CR>', { noremap = true, silent = true, desc = 'previous' })
+    vim.keymap.set('n', '<S-l>', ':bnext!<CR>', { noremap = true, silent = true, desc = 'next' })
 
     vim.keymap.set('n', '<Space>tn', ':tabnext<CR>', { noremap = true, silent = true, desc = 'next' })
     vim.keymap.set('n', '<Space>tp', ':tabprevious<CR>', { noremap = true, silent = true, desc = 'prev' })
