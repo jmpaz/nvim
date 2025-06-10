@@ -47,16 +47,18 @@ function M.setup()
   end
 
   function M.goto_definition(new_window)
-    local params = util.make_position_params()
+    local client = vim.lsp.get_clients({ bufnr = 0 })[1]
+    local enc = client and client.offset_encoding or 'utf-16'
+    local params = util.make_position_params(0, enc)
     vim.lsp.buf_request(0, 'textDocument/definition', params, function(err, result, ctx)
       if err or not result then return end
       local loc = vim.islist(result) and result[1] or result
-      local client = vim.lsp.get_client_by_id(ctx.client_id)
-      local enc = client and client.offset_encoding or 'utf-8'
+      local c = vim.lsp.get_client_by_id(ctx.client_id)
+      local e = c and c.offset_encoding or enc
       if new_window then
-        util.open_document_new_window(loc, enc)
+        util.open_document_new_window(loc, e)
       else
-        util.jump_to_location(loc, enc, true)
+        util.show_document(loc, e, { reuse_win = true, focus = true })
       end
     end)
   end
