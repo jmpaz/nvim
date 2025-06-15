@@ -31,6 +31,14 @@ function M.setup()
     vim.keymap.set('i', '<A-t>', function() neocodeium.cycle_or_complete(-1) end)
 
     vim.keymap.set('i', '<A-c>', neocodeium.clear)
+
+    vim.keymap.set('i', '<Tab>', function()
+      if neocodeium.visible() then
+        neocodeium.accept()
+      else
+        return '<Tab>'
+      end
+    end, { expr = true })
   end)
 end
 
