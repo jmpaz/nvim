@@ -2,7 +2,7 @@ return function()
   vim.g.mapleader = ' '
   vim.o.number = true
   vim.o.relativenumber = true
-  vim.o.laststatus = 2
+  vim.o.laststatus = 3
   vim.o.list = true
   vim.o.listchars = table.concat({ 'extends:…', 'nbsp:␣', 'precedes:…', 'tab:> ' }, ',')
   vim.o.autoindent = true
