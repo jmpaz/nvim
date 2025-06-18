@@ -24,10 +24,7 @@ function M.setup()
       end,
     })
 
-    vim.api.nvim_create_autocmd('BufWritePre', {
-      pattern = '*.lua',
-      callback = function() vim.lsp.buf.format({ async = false }) end,
-    })
+    -- vim.lsp.handlers['$/progress'] = function() end
   end)
 end
 

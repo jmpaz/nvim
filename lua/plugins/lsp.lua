@@ -14,12 +14,19 @@ function M.setup()
     })
 
     local ruff_client_id = nil
+    local ruff_attached_buffers = {}
     vim.api.nvim_create_autocmd('LspAttach', {
       group = vim.api.nvim_create_augroup('lsp_attach_config', { clear = true }),
       callback = function(args)
         local client = vim.lsp.get_client_by_id(args.data.client_id)
         if not client then return end
         if client.name == 'ruff' then
+          -- prevent duplicate instances
+          if ruff_attached_buffers[args.buf] then
+            vim.lsp.stop_client(client.id, true)
+            return
+          end
+          ruff_attached_buffers[args.buf] = true
           ruff_client_id = client.id
           client.server_capabilities.hoverProvider = false
         elseif client.name == 'pyright' then
