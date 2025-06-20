@@ -12,9 +12,9 @@ function M.setup()
 
       vim.keymap.set(
         'n',
-        '<leader>cz',
+        '<leader>fc',
         function() require('telescope').extensions.chezmoi.find_files() end,
-        { noremap = true, silent = true, desc = 'chezmoi files' }
+        { noremap = true, silent = true, desc = 'chezmoi' }
       )
     end, 100)
   end)
