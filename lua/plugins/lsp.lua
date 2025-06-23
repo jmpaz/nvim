@@ -29,6 +29,7 @@ function M.setup()
           ruff_attached_buffers[args.buf] = true
           ruff_client_id = client.id
           client.server_capabilities.hoverProvider = false
+          client.server_capabilities.documentFormattingProvider = true
         elseif client.name == 'pyright' then
           client.server_capabilities.diagnosticProvider = false
           client.server_capabilities.publishDiagnostics = false
@@ -50,9 +51,27 @@ function M.setup()
     })
 
     require('lspconfig').pyright.setup({
-      on_attach = function(client)
+      on_attach = function(client, bufnr)
         client.server_capabilities.diagnosticProvider = false
         client.server_capabilities.publishDiagnostics = false
+
+        local opts = { noremap = true, silent = true }
+        local patch = require('config.lsp_patch')
+        vim.keymap.set(
+          'n',
+          'gd',
+          function() patch.goto_definition(false) end,
+          vim.tbl_extend('force', opts, { buffer = bufnr })
+        )
+        vim.keymap.set(
+          'n',
+          'g ',
+          function() patch.goto_definition(true) end,
+          vim.tbl_extend('force', opts, { buffer = bufnr })
+        )
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
       end,
       settings = {
         pyright = {
@@ -121,19 +140,37 @@ function M.setup()
     vim.api.nvim_create_autocmd('BufWritePre', {
       pattern = '*.py',
       callback = function()
-        vim.lsp.buf.code_action({
-          context = {
-            only = { 'source.organizeImports' },
-            diagnostics = {},
-          },
-          apply = true,
-        })
+        -- organize imports
+        local ok = pcall(
+          function()
+            vim.lsp.buf.code_action({
+              context = {
+                only = { 'source.organizeImports' },
+                diagnostics = {},
+              },
+              apply = true,
+            })
+          end
+        )
+
+        -- format buffer
+        local format_ok = false
         if ruff_client_id then
-          vim.lsp.buf.format({
-            async = false,
-            filter = function(client) return client.id == ruff_client_id end,
-          })
+          local clients = vim.lsp.get_clients()
+          for _, client in ipairs(clients) do
+            if client.id == ruff_client_id and client.server_capabilities.documentFormattingProvider then
+              vim.lsp.buf.format({
+                async = false,
+                bufnr = 0,
+                filter = function(c) return c.id == ruff_client_id end,
+              })
+              format_ok = true
+              break
+            end
+          end
         end
+
+        if not format_ok then pcall(vim.lsp.buf.format, { async = false, bufnr = 0 }) end
       end,
     })
   end)
