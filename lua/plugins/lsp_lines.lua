@@ -4,7 +4,7 @@ function M.setup()
   local later, add = MiniDeps.later, MiniDeps.add
   later(function()
     add({
-      source = 'git.sr.ht/~whynothugo/lsp_lines.nvim',
+      source = 'https://git.sr.ht/~whynothugo/lsp_lines.nvim',
     })
 
     require('lsp_lines').setup()

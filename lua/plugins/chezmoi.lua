@@ -7,8 +7,9 @@ function M.setup()
       source = 'xvzc/chezmoi.nvim',
     })
 
-    vim.defer_fn(function()
-      pcall(require('telescope').load_extension, 'chezmoi')
+    later(function()
+      if pcall(require, 'telescope') then
+        pcall(require('telescope').load_extension, 'chezmoi')
 
       vim.keymap.set(
         'n',
@@ -16,7 +17,8 @@ function M.setup()
         function() require('telescope').extensions.chezmoi.find_files() end,
         { noremap = true, silent = true, desc = 'chezmoi' }
       )
-    end, 100)
+      end
+    end)
   end)
 end
 
