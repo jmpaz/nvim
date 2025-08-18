@@ -26,8 +26,8 @@ function M.setup()
     vim.keymap.set(
       'n',
       '<Space>sg',
-      function() vim.cmd('Pick grep_live') end,
-      { noremap = true, silent = true, desc = 'grep' }
+      function() require('telescope.builtin').live_grep() end,
+      { noremap = true, silent = true, desc = 'grep (telescope)' }
     )
     vim.keymap.set(
       'n',
