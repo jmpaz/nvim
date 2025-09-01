@@ -9,7 +9,7 @@ function M.setup()
     })
     require('mason').setup()
     require('mason-lspconfig').setup({
-      ensure_installed = { 'ruff', 'pyright', 'gopls' },
+      ensure_installed = { 'ruff', 'pyright', 'gopls', 'biome' },
       automatic_installation = true,
     })
 
@@ -116,6 +116,32 @@ function M.setup()
       },
     })
 
+    require('lspconfig').biome.setup({
+      on_attach = function(client, bufnr)
+        local opts = { noremap = true, silent = true }
+        local patch = require('config.lsp_patch')
+        vim.keymap.set(
+          'n',
+          'gd',
+          function() patch.goto_definition(false) end,
+          vim.tbl_extend('force', opts, { buffer = bufnr })
+        )
+        vim.keymap.set(
+          'n',
+          'g ',
+          function() patch.goto_definition(true) end,
+          vim.tbl_extend('force', opts, { buffer = bufnr })
+        )
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+
+        client.server_capabilities.documentFormattingProvider = true
+        client.server_capabilities.documentRangeFormattingProvider = true
+      end,
+      root_dir = require('lspconfig').util.root_pattern('biome.json', 'biome.jsonc', 'package.json'),
+    })
+
     vim.api.nvim_create_autocmd('BufWritePre', {
       pattern = '*.go',
       callback = function()
@@ -172,6 +198,11 @@ function M.setup()
 
         if not format_ok then pcall(vim.lsp.buf.format, { async = false, bufnr = 0 }) end
       end,
+    })
+
+    vim.api.nvim_create_autocmd('BufWritePre', {
+      pattern = { '*.js', '*.jsx', '*.ts', '*.tsx', '*.mjs', '*.cjs' },
+      callback = function() vim.lsp.buf.format({ async = false }) end,
     })
   end)
 end
