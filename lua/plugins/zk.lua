@@ -2,19 +2,6 @@ local M = {}
 
 function M.setup()
   local now, later, add = MiniDeps.now, MiniDeps.later, MiniDeps.add
-  now(function()
-    vim.api.nvim_create_autocmd('FileType', {
-      pattern = { 'markdown', 'md' },
-      callback = function(args)
-        local bufnr = args.buf
-        local opts = { buffer = bufnr, noremap = true, silent = true, desc = 'Go to linked note' }
-        local patch = require('config.lsp_patch')
-        vim.keymap.set('n', 'gd', function() patch.goto_definition(false) end, opts)
-        vim.keymap.set('n', 'g ', function() patch.goto_definition(true) end, opts)
-        vim.opt_local.conceallevel = 2
-      end,
-    })
-  end)
 
   later(function()
     add({
