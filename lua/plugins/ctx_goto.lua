@@ -80,10 +80,44 @@ local function path_under_cursor()
 end
 
 local function sanitize(tok) return tok:gsub('%s+$', ''):gsub(',$', '') end
+
+local function markdown_target(tok)
+  if tok:sub(1, 1) ~= '[' then return tok end
+  local label_close = tok:find('%]')
+  if not label_close then return tok end
+  local open_paren = tok:find('%(', label_close + 1)
+  local close_paren = tok:match('^.*()%)%s*$')
+  if not open_paren or not close_paren or open_paren >= close_paren then return tok end
+  local target = tok:sub(open_paren + 1, close_paren - 1)
+  target = target:gsub('^%s*<', ''):gsub('>%s*$', '')
+  return target ~= '' and target or tok
+end
 local function filename_alias(tok) return tok:match('::filename=([^%s]+)$') end
+
+local function prefer_note_files(path)
+  if path:match('%.[^/%.]+$') then return {} end
+  local seen, matches = {}, {}
+  local function add(p)
+    if exists(p) and not seen[p] then matches[#matches + 1], seen[p] = p, true end
+  end
+  local env_ext = vim.env.ZK_NOTE_EXTENSION or vim.env.ZK_DEFAULT_NOTE_EXTENSION or vim.env.ZK_NOTEBOOK_EXT
+  if env_ext and env_ext ~= '' then
+    if env_ext:sub(1, 1) ~= '.' then env_ext = '.' .. env_ext end
+    add(path .. env_ext)
+  end
+  add(path .. '.md')
+  add(path .. '.markdown')
+  add(path .. '.txt')
+  if fn and fn.glob then
+    local globbed = fn.glob(path .. '.*', 0, 1)
+    for _, g in ipairs(globbed) do add(g) end
+  end
+  return matches
+end
 
 local function resolve(tok, root)
   tok = sanitize(tok)
+  tok = markdown_target(tok)
   local base = expand_home(root or vim.env.ZK_NOTEBOOK_DIR or vim.loop.cwd() or '')
   local out = {}
 
@@ -109,9 +143,19 @@ local function resolve(tok, root)
 
   local existing = {}
   for _, e in ipairs(out) do
-    if e.kind == 'file' and exists(e.target) then existing[#existing + 1] = e end
+    if e.kind == 'file' then
+      if exists(e.target) then
+        existing[#existing + 1] = e
+      else
+        local alts = prefer_note_files(e.target)
+        for _, alt in ipairs(alts) do
+          existing[#existing + 1] = { kind = 'file', target = alt }
+        end
+      end
+    end
   end
-  return #existing > 0 and existing or out
+  if #existing > 0 then return existing end
+  return out
 end
 
 local function open(entry, vsplit)
