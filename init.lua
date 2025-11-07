@@ -46,8 +46,8 @@ later(function()
   require('mini.operators').setup()
 end)
 
--- Load all plugins
-for name, type in vim.fs.dir('/home/josh/.config/nvim/lua/plugins') do
+local plugins_dir = vim.fs.joinpath(vim.fn.stdpath('config'), 'lua', 'plugins')
+for name, type in vim.fs.dir(plugins_dir) do
   if type == 'file' and name:match('%.lua$') and name ~= 'init.lua' then
     local module = name:gsub('%.lua$', '')
     require('plugins.' .. module).setup()
