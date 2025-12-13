@@ -41,4 +41,6 @@ return function()
       vim.opt_local.expandtab = true
     end,
   })
+
+  require('config.tmp_markdown')()
 end

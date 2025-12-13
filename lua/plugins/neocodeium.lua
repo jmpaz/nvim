@@ -8,19 +8,72 @@ function M.setup()
     })
 
     local neocodeium = require('neocodeium')
-    local blink = require('blink.cmp')
+    local ok_blink, blink = pcall(require, 'blink.cmp')
+
+    local function is_tmp_markdown(bufnr)
+      local name = vim.api.nvim_buf_get_name(bufnr)
+      return name:match('^/tmp/claude%-.*%.md$')
+        or name:match('^/tmp/%.tmp.*%.md$')
+        or name:match('^/private/tmp/claude%-.*%.md$')
+        or name:match('^/private/tmp/%.tmp.*%.md$')
+    end
 
     vim.api.nvim_create_autocmd('User', {
       pattern = 'BlinkCmpMenuOpen',
-      callback = function() neocodeium.clear() end,
+      callback = function()
+        if ok_blink then
+          neocodeium.clear()
+        end
+      end,
+    })
+
+    vim.api.nvim_create_autocmd('User', {
+      pattern = 'BlinkCmpMenuClose',
+      callback = function()
+        if vim.api.nvim_get_mode().mode:sub(1, 1) ~= 'i' then
+          return
+        end
+
+        local state = require('neocodeium.state')
+        local STATUS = require('neocodeium.enums').STATUS
+        if state:get_status() ~= STATUS.enabled then
+          return
+        end
+
+        state.active = true
+        require('neocodeium.completer'):initiate(true)
+      end,
     })
 
     neocodeium.setup({
-      filter = function() return not blink.is_visible() end,
+      filter = function(bufnr)
+        if is_tmp_markdown(bufnr or 0) then
+          return true
+        end
+
+        return not (ok_blink and blink.is_visible())
+      end,
       show_label = true,
       silent = true,
-      filetypes = {},
+      filetypes = {
+        ['.'] = true,
+      },
     })
+
+    vim.schedule(function()
+      if vim.api.nvim_get_mode().mode:sub(1, 1) ~= 'i' then
+        return
+      end
+
+      local state = require('neocodeium.state')
+      local STATUS = require('neocodeium.enums').STATUS
+      if state:get_status() ~= STATUS.enabled then
+        return
+      end
+
+      state.active = true
+      require('neocodeium.completer'):initiate(true)
+    end)
 
     vim.keymap.set('i', '<A-CR>', neocodeium.accept)
 
