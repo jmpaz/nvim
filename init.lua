@@ -23,7 +23,14 @@ require('config.keymaps')()
 require('config.lsp_patch').setup()
 
 now(function()
-  require('mini.starter').setup({ footer = '' })
+  local starter = require('mini.starter')
+  starter.setup({
+    footer = '',
+    items = {
+      starter.sections.builtin_actions(),
+      starter.sections.recent_files(10, false),
+    },
+  })
   require('mini.icons').setup()
   require('mini.tabline').setup()
   require('mini.statusline').setup()
