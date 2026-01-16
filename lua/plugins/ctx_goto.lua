@@ -55,6 +55,18 @@ local function find_root(block)
   end
 end
 
+local function find_root_in_yaml_file()
+  local ft = vim.bo.filetype
+  if ft ~= 'yaml' and ft ~= 'yml' then return nil end
+  for _, line in ipairs(buf_lines()) do
+    local root = line:match('^root:%s*(.+)%s*$')
+    if root then
+      root = root:gsub('#.*$', ''):gsub('^["\'](.-)["\']$', '%1'):gsub('%s+$', '')
+      if root ~= '' then return root end
+    end
+  end
+end
+
 local function path_under_cursor()
   local _, col = cur()
   local line = api.nvim_get_current_line():gsub('%s+#.*$', '')
@@ -73,6 +85,7 @@ local function path_under_cursor()
   add([[https?://%S+]])
   add([[%f[%S]%-%s*([%w%._%-%/{}:,=]+)]])
   add([[path:%s*([%w%._%-%/{}:,=]+)]])
+  add([[source:%s*([%w%._%-%/{}:,=]+)]])
   add([[([%w%._%-%/{}:,=]+/%S+)]])
   for _, c in ipairs(cands) do
     if c.s <= col and col <= c.e then return c.text end
@@ -175,8 +188,8 @@ end
 function M.smart_goto(vsplit)
   local tok = path_under_cursor()
   if not tok then return fallback(vsplit) end
-  local block, root = fenced_block_at_cursor(), nil
-  root = find_root(block)
+  local block = fenced_block_at_cursor()
+  local root = find_root(block) or find_root_in_yaml_file()
   if root == '~' then root = expand_home(root) end
   local cands = resolve(tok, root)
   if #cands == 0 then return fallback(vsplit) end
@@ -188,7 +201,7 @@ end
 
 function M.setup()
   api.nvim_create_autocmd('FileType', {
-    pattern = { 'markdown', 'md' },
+    pattern = { 'markdown', 'md', 'yaml', 'yml' },
     callback = function(args)
       local o = { buffer = args.buf, noremap = true, silent = true }
       vim.keymap.set('n', 'gd', function() M.smart_goto(false) end, vim.tbl_extend('force', o, { desc = 'smart goto' }))
