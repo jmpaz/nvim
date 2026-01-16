@@ -185,7 +185,30 @@ local function fallback(vsplit)
   return vim.lsp.buf.definition()
 end
 
+function M.get_frontmatter_tag()
+  local lines = buf_lines()
+  if #lines == 0 or lines[1] ~= '---' then return nil end
+  local row = cur()
+  for i = 2, #lines do
+    if lines[i]:match('^%-%-%-') then
+      if row <= 1 or row >= i then return nil end
+      break
+    end
+  end
+  local line = api.nvim_get_current_line()
+  return line:match('^%s*%-%s*([%w_/-]+)%s*$')
+end
+
+function M.goto_tag(tag)
+  local ok, zk = pcall(require, 'zk')
+  if not ok then return false end
+  zk.edit({ tags = { tag } }, { title = 'Notes: #' .. tag })
+  return true
+end
+
 function M.smart_goto(vsplit)
+  local tag = M.get_frontmatter_tag()
+  if tag then return M.goto_tag(tag) end
   local tok = path_under_cursor()
   if not tok then return fallback(vsplit) end
   local block = fenced_block_at_cursor()
