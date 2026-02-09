@@ -196,7 +196,7 @@ function M.get_frontmatter_tag()
     end
   end
   local line = api.nvim_get_current_line()
-  return line:match('^%s*%-%s*([%w_/-]+)%s*$')
+  return line:match('^%s*%-%s*([%w%._/-]+)%s*$')
 end
 
 function M.goto_tag(tag)
