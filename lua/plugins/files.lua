@@ -21,6 +21,23 @@ function M.setup()
       },
     })
 
+    vim.api.nvim_create_autocmd('User', {
+      pattern = 'MiniFilesBufferCreate',
+      callback = function(args)
+        vim.keymap.set('n', 'q', function()
+          require('mini.files').close()
+          local bufs = vim.tbl_filter(function(b)
+            return vim.api.nvim_buf_is_valid(b)
+              and vim.bo[b].buflisted
+              and (vim.api.nvim_buf_get_name(b) ~= '' or vim.bo[b].modified)
+          end, vim.api.nvim_list_bufs())
+          if #bufs == 0 then
+            vim.cmd('qa')
+          end
+        end, { buffer = args.data.buf_id })
+      end,
+    })
+
     vim.keymap.set('n', '-', function()
       local file_path = vim.fn.expand('%:p')
       if file_path == '' then file_path = vim.loop.cwd() end
