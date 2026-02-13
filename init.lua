@@ -19,6 +19,7 @@ require('mini.deps').setup({ path = { package = path_package } })
 local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 
 require('config.options')()
+require('config.clipboard')()
 require('config.keymaps')()
 require('config.lsp_patch').setup()
 
