@@ -6,19 +6,26 @@ return function()
       or path:match('^/private/tmp/%.tmp.*%.md$')
   end
 
+  local function is_tmp_fish_path(path)
+    return path:match('^/tmp/tmp.*%.fish$') or path:match('^/private/tmp/tmp.*%.fish$')
+  end
+
   vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufNewFile', 'BufWinEnter' }, {
     pattern = {
       '/tmp/claude-*.md',
       '/tmp/.tmp*.md',
       '/private/tmp/claude-*.md',
       '/private/tmp/.tmp*.md',
+      '/tmp/tmp*.fish',
+      '/private/tmp/tmp*.fish',
     },
     callback = function(ev)
       local bufnr = ev.buf or 0
       vim.opt_local.wrap = true
 
       if vim.bo[bufnr].filetype == '' then
-        vim.bo[bufnr].filetype = 'markdown'
+        local path = vim.api.nvim_buf_get_name(bufnr)
+        vim.bo[bufnr].filetype = is_tmp_fish_path(path) and 'fish' or 'markdown'
       end
 
       local path = vim.api.nvim_buf_get_name(bufnr)
@@ -41,7 +48,7 @@ return function()
     callback = function(ev)
       local bufnr = ev.buf or 0
       local path = vim.api.nvim_buf_get_name(bufnr)
-      if path == '' or not is_tmp_markdown_path(path) then
+      if path == '' or not (is_tmp_markdown_path(path) or is_tmp_fish_path(path)) then
         return
       end
 

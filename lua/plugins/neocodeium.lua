@@ -16,6 +16,8 @@ function M.setup()
         or name:match('^/tmp/%.tmp.*%.md$')
         or name:match('^/private/tmp/claude%-.*%.md$')
         or name:match('^/private/tmp/%.tmp.*%.md$')
+        or name:match('^/tmp/tmp.*%.fish$')
+        or name:match('^/private/tmp/tmp.*%.fish$')
     end
 
     vim.api.nvim_create_autocmd('User', {
